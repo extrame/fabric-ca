@@ -1,4 +1,4 @@
-module github.com/hyperledger/fabric-ca
+module github.com/extrame/fabric-ca
 
 go 1.15
 
