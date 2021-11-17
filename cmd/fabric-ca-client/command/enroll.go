@@ -118,12 +118,15 @@ func (c *enrollCmd) runEnroll(cmd *cobra.Command, args []string) error {
 //home the home directory
 //caname the caname
 //ip the ip of server(difference with original library)
-func Enroll(url, home, pem, caname, ip string) error {
+func Enroll(url, home, mspdir, pem, caname, ip string) error {
 	log.Debug("Entered runEnroll")
 	var myViper = viper.New()
 	myViper.Set("url", url)
 	myViper.Set("tls.certfiles", pem)
 	myViper.Set("caname", caname)
+	if mspdir != "" {
+		myViper.Set("mspdir", mspdir)
+	}
 	clientCmd := &ClientCmd{
 		myViper: myViper,
 	}
