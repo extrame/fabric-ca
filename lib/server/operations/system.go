@@ -39,6 +39,8 @@ type System struct {
 	httpServer *http.Server
 	mux        *mux.Router
 	addr       string
+
+	ctx context.Context
 }
 
 // Options contains configuration for the operations system
@@ -102,6 +104,7 @@ func (s *System) Stop() error {
 		s.sendTicker = nil
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	s.ctx = ctx
 	defer cancel()
 
 	return s.httpServer.Shutdown(ctx)
@@ -170,7 +173,7 @@ func (s *System) startMetricsTickers() error {
 		writeInterval := s.options.Metrics.Statsd.WriteInterval
 
 		s.sendTicker = time.NewTicker(writeInterval)
-		go s.statsd.SendLoop(s.sendTicker.C, network, address)
+		go s.statsd.SendLoop(s.ctx, s.sendTicker.C, network, address)
 	}
 
 	return nil
