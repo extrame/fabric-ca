@@ -116,9 +116,10 @@ func (c *enrollCmd) runEnroll(cmd *cobra.Command, args []string) error {
 //Enroll call enroll function as a library
 //url the server url
 //home the home directory
+//mspdir the mspdir of output
 //caname the caname
 //ip the ip of server(difference with original library)
-func Enroll(url, home, mspdir, pem, caname, ip string) error {
+func Enroll(url, home, mspdir string, csrhosts []string, enrollment_profile, pem, caname, ip string) error {
 	log.Debug("Entered runEnroll")
 	var myViper = viper.New()
 	myViper.Set("url", url)
@@ -126,6 +127,12 @@ func Enroll(url, home, mspdir, pem, caname, ip string) error {
 	myViper.Set("caname", caname)
 	if mspdir != "" {
 		myViper.Set("mspdir", mspdir)
+	}
+	if csrhosts != nil {
+		myViper.Set("csr.hosts", csrhosts)
+	}
+	if enrollment_profile != "" {
+		myViper.Set("enrollment.profile", enrollment_profile)
 	}
 	clientCmd := &ClientCmd{
 		myViper: myViper,
