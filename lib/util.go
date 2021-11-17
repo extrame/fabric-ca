@@ -18,9 +18,9 @@ import (
 	"path/filepath"
 
 	"github.com/cloudflare/cfssl/log"
+	"github.com/extrame/fabric-ca/internal/pkg/api"
+	"github.com/extrame/fabric-ca/lib/caerrors"
 	"github.com/grantae/certinfo"
-	"github.com/hyperledger/fabric-ca/internal/pkg/api"
-	"github.com/hyperledger/fabric-ca/lib/caerrors"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )

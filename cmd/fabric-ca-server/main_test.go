@@ -18,10 +18,10 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cfssl/log"
-	"github.com/hyperledger/fabric-ca/internal/pkg/api"
-	"github.com/hyperledger/fabric-ca/internal/pkg/util"
-	"github.com/hyperledger/fabric-ca/lib"
-	"github.com/hyperledger/fabric-ca/lib/metadata"
+	"github.com/extrame/fabric-ca/internal/pkg/api"
+	"github.com/extrame/fabric-ca/internal/pkg/util"
+	"github.com/extrame/fabric-ca/lib"
+	"github.com/extrame/fabric-ca/lib/metadata"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )

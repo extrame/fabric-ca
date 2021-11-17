@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/hyperledger/fabric-ca/internal/pkg/util"
-	. "github.com/hyperledger/fabric-ca/lib/client/credential/x509"
+	"github.com/extrame/fabric-ca/internal/pkg/util"
+	. "github.com/extrame/fabric-ca/lib/client/credential/x509"
 	"github.com/stretchr/testify/assert"
 )
 

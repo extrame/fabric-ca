@@ -12,10 +12,10 @@ import (
 	"os"
 
 	"github.com/cloudflare/cfssl/log"
-	"github.com/hyperledger/fabric-ca/internal/pkg/util"
-	"github.com/hyperledger/fabric-ca/lib/caerrors"
-	"github.com/hyperledger/fabric-ca/lib/server/certificaterequest"
-	cadbuser "github.com/hyperledger/fabric-ca/lib/server/user"
+	"github.com/extrame/fabric-ca/internal/pkg/util"
+	"github.com/extrame/fabric-ca/lib/caerrors"
+	"github.com/extrame/fabric-ca/lib/server/certificaterequest"
+	cadbuser "github.com/extrame/fabric-ca/lib/server/user"
 	"github.com/pkg/errors"
 )
 

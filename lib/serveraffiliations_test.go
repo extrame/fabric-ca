@@ -10,10 +10,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hyperledger/fabric-ca/internal/pkg/api"
-	"github.com/hyperledger/fabric-ca/internal/pkg/util"
-	"github.com/hyperledger/fabric-ca/lib/server/db"
-	cadbuser "github.com/hyperledger/fabric-ca/lib/server/user"
+	"github.com/extrame/fabric-ca/internal/pkg/api"
+	"github.com/extrame/fabric-ca/internal/pkg/util"
+	"github.com/extrame/fabric-ca/lib/server/db"
+	cadbuser "github.com/extrame/fabric-ca/lib/server/user"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/ocsp"
 )

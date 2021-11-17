@@ -2,7 +2,7 @@
 
 ## Download the binaries
 
-The Fabric CA server and CA client binaries can be downloaded from [github](https://github.com/hyperledger/fabric-ca/releases). Scroll down to **Assets** and select the latest binary for your machine type. The .zip file contains both the CA server and the CA client binaries. After you have mastered deploying and running a CA by using these binaries, it is likely you will want to use the Fabric CA image instead, for example in a Kubernetes or Docker deployment. For now though, the purpose of this topic is to teach you how to properly use the binaries.
+The Fabric CA server and CA client binaries can be downloaded from [github](https://github.com/extrame/fabric-ca/releases). Scroll down to **Assets** and select the latest binary for your machine type. The .zip file contains both the CA server and the CA client binaries. After you have mastered deploying and running a CA by using these binaries, it is likely you will want to use the Fabric CA image instead, for example in a Kubernetes or Docker deployment. For now though, the purpose of this topic is to teach you how to properly use the binaries.
 
 ### Server binary file
 

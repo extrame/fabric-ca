@@ -10,9 +10,9 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cfssl/log"
-	"github.com/hyperledger/fabric-ca/lib/server/db"
-	"github.com/hyperledger/fabric-ca/lib/server/db/util"
-	"github.com/hyperledger/fabric-ca/lib/server/user"
+	"github.com/extrame/fabric-ca/lib/server/db"
+	"github.com/extrame/fabric-ca/lib/server/db/util"
+	"github.com/extrame/fabric-ca/lib/server/user"
 	"github.com/pkg/errors"
 )
 

@@ -24,7 +24,7 @@ The following are guidelines to follow when contributing:
 2. To run the unit tests manually:
 
    ```
-   # cd $GOPATH/src/github.com/hyperledger/fabric-ca
+   # cd $GOPATH/src/github.com/extrame/fabric-ca
    # make unit-tests
    ```
 
@@ -74,7 +74,7 @@ See [FVT tests](scripts/fvt/README.md) for information on functional verificatio
 Following are the steps to update cfssl package using version 1.0.8 of govendor tool.
 
 * Remove cfssl from vendor folder
-   * cd $GOPATH/src/github.com/hyperledger/fabric-ca/vendor
+   * cd $GOPATH/src/github.com/extrame/fabric-ca/vendor
    * govendor remove github.com/cloudflare/cfssl/...
    * rm -rf github.com/cloudflare/cfssl/
 
@@ -85,7 +85,7 @@ Following are the steps to update cfssl package using version 1.0.8 of govendor 
    * git clone https://github.com/cloudflare/cfssl.git
 
 * Add cfssl from $GOPATH to the vendor folder
-   * cd $GOPATH/src/github.com/hyperledger/fabric-ca/vendor
+   * cd $GOPATH/src/github.com/extrame/fabric-ca/vendor
    * govendor add github.com/cloudflare/cfssl/^
    * You can optionally specify revision or tag to add a particular revision of code to the vendor folder
       * govendor add github.com/cloudflare/cfssl/^@abc12032

@@ -37,7 +37,7 @@ stages:
             inputs:
               version: $(GOVER)
           - checkout: self
-            path: 'go/src/github.com/hyperledger/fabric-ca'
+            path: 'go/src/github.com/extrame/fabric-ca'
             displayName: Checkout Fabric CA Code
           - script: make dist
             displayName: Compile Binary and Create Tarball
@@ -55,7 +55,7 @@ stages:
         steps:
           - template: install_deps.yml
           - checkout: self
-            path: 'go/src/github.com/hyperledger/fabric-ca'
+            path: 'go/src/github.com/extrame/fabric-ca'
             displayName: Checkout Fabric CA Code
           - script: ./ci/scripts/publish_docker.sh
             env:

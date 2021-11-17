@@ -8,7 +8,7 @@ package db
 
 import (
 	"github.com/cloudflare/cfssl/log"
-	"github.com/hyperledger/fabric-ca/lib/server/db/util"
+	"github.com/extrame/fabric-ca/lib/server/db/util"
 )
 
 //go:generate counterfeiter -o mocks/migrator.go -fake-name Migrator . Migrator

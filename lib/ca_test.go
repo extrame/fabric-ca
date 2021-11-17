@@ -16,11 +16,11 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cfssl/csr"
-	"github.com/hyperledger/fabric-ca/internal/pkg/api"
-	"github.com/hyperledger/fabric-ca/internal/pkg/util"
-	"github.com/hyperledger/fabric-ca/lib/mocks"
-	"github.com/hyperledger/fabric-ca/lib/server/db/sqlite"
-	dbutil "github.com/hyperledger/fabric-ca/lib/server/db/util"
+	"github.com/extrame/fabric-ca/internal/pkg/api"
+	"github.com/extrame/fabric-ca/internal/pkg/util"
+	"github.com/extrame/fabric-ca/lib/mocks"
+	"github.com/extrame/fabric-ca/lib/server/db/sqlite"
+	dbutil "github.com/extrame/fabric-ca/lib/server/db/util"
 	"github.com/hyperledger/fabric/common/metrics/metricsfakes"
 	"github.com/stretchr/testify/assert"
 )

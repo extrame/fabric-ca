@@ -12,10 +12,10 @@ ADD . /build/fabric-ca
 WORKDIR /build/fabric-ca
 RUN go build -tags "${GO_TAGS}" -ldflags "${GO_LDFLAGS}" \
 	-o /usr/local/bin/fabric-ca-server \
-	github.com/hyperledger/fabric-ca/cmd/fabric-ca-server \
+	github.com/extrame/fabric-ca/cmd/fabric-ca-server \
 	&& go build -tags "${GO_TAGS}" -ldflags "${GO_LDFLAGS}" \
 	-o /usr/local/bin/fabric-ca-client \
-	github.com/hyperledger/fabric-ca/cmd/fabric-ca-client
+	github.com/extrame/fabric-ca/cmd/fabric-ca-client
 
 FROM debian:buster-20210816-slim
 ARG PG_VER

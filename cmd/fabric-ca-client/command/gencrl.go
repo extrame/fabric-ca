@@ -20,9 +20,9 @@ import (
 	"time"
 
 	"github.com/cloudflare/cfssl/log"
-	"github.com/hyperledger/fabric-ca/internal/pkg/api"
-	"github.com/hyperledger/fabric-ca/internal/pkg/util"
-	"github.com/hyperledger/fabric-ca/lib"
+	"github.com/extrame/fabric-ca/internal/pkg/api"
+	"github.com/extrame/fabric-ca/internal/pkg/util"
+	"github.com/extrame/fabric-ca/lib"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )

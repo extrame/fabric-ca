@@ -12,8 +12,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/hyperledger/fabric-ca/lib/server/db"
-	dbutil "github.com/hyperledger/fabric-ca/lib/server/db/util"
+	"github.com/extrame/fabric-ca/lib/server/db"
+	dbutil "github.com/extrame/fabric-ca/lib/server/db/util"
 	"github.com/stretchr/testify/assert"
 )
 

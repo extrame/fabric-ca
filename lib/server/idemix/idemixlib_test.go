@@ -9,9 +9,9 @@ package idemix_test
 import (
 	"testing"
 
+	"github.com/extrame/fabric-ca/internal/pkg/util"
+	"github.com/extrame/fabric-ca/lib/server/idemix"
 	"github.com/hyperledger/fabric-amcl/amcl/FP256BN"
-	"github.com/hyperledger/fabric-ca/internal/pkg/util"
-	"github.com/hyperledger/fabric-ca/lib/server/idemix"
 	fabidemix "github.com/hyperledger/fabric/idemix"
 )
 

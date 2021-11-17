@@ -18,13 +18,14 @@ package lib
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 	"path"
 
 	"github.com/cloudflare/cfssl/log"
-	"github.com/hyperledger/fabric-ca/internal/pkg/api"
-	"github.com/hyperledger/fabric-ca/internal/pkg/util"
-	"github.com/hyperledger/fabric-ca/lib/tls"
+	"github.com/extrame/fabric-ca/internal/pkg/api"
+	"github.com/extrame/fabric-ca/internal/pkg/util"
+	"github.com/extrame/fabric-ca/lib/tls"
 	"github.com/hyperledger/fabric/bccsp/factory"
 	"github.com/pkg/errors"
 )
@@ -48,7 +49,7 @@ type ClientConfig struct {
 // Enroll a client given the server's URL and the client's home directory.
 // The URL may be of the form: http://user:pass@host:port where user and pass
 // are the enrollment ID and secret, respectively.
-func (c *ClientConfig) Enroll(rawurl, home string) (*EnrollmentResponse, error) {
+func (c *ClientConfig) Enroll(rawurl, home string, trs ...*http.Transport) (*EnrollmentResponse, error) {
 	purl, err := url.Parse(rawurl)
 	if err != nil {
 		return nil, err
@@ -73,7 +74,7 @@ func (c *ClientConfig) Enroll(rawurl, home string) (*EnrollmentResponse, error) 
 	c.TLS.Enabled = purl.Scheme == "https"
 	c.Enrollment.CSR = &c.CSR
 	client := &Client{HomeDir: home, Config: c}
-	return client.Enroll(&c.Enrollment)
+	return client.Enroll(&c.Enrollment, trs...)
 }
 
 // GenCSR generates a certificate signing request and writes the CSR to a file.

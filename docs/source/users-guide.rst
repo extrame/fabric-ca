@@ -15,7 +15,7 @@ Hyperledger Fabric CA consists of both a server and a client component as
 described later in this document.
 
 For developers interested in contributing to Hyperledger Fabric CA, see the
-`Fabric CA repository <https://github.com/hyperledger/fabric-ca>`__ for more
+`Fabric CA repository <https://github.com/extrame/fabric-ca>`__ for more
 information.
 
 
@@ -139,7 +139,7 @@ in $GOPATH/bin.
 
 .. code:: bash
 
-    go get -u github.com/hyperledger/fabric-ca/cmd/...
+    go get -u github.com/extrame/fabric-ca/cmd/...
 
 Note: If you have already cloned the fabric-ca repository, make sure you are on the
 main branch before running the 'go get' command above. Otherwise, you might see the
@@ -147,7 +147,7 @@ following error:
 
 ::
 
-    <gopath>/src/github.com/hyperledger/fabric-ca; git pull --ff-only
+    <gopath>/src/github.com/extrame/fabric-ca; git pull --ff-only
     There is no tracking information for the current branch.
     Please specify which branch you want to merge with.
     See git-pull(1) for details.
@@ -158,7 +158,7 @@ following error:
 
         git branch --set-upstream-to=<remote>/<branch> tlsdoc
 
-    package github.com/hyperledger/fabric-ca/cmd/fabric-ca-client: exit status 1
+    package github.com/extrame/fabric-ca/cmd/fabric-ca-client: exit status 1
 
 Start Server Natively
 ~~~~~~~~~~~~~~~~~~~~~
@@ -221,7 +221,7 @@ You can build and start the server via Docker Compose as shown below.
 
 .. code:: bash
 
-    cd $GOPATH/src/github.com/hyperledger/fabric-ca
+    cd $GOPATH/src/github.com/extrame/fabric-ca
     make docker
     cd docker/server
     docker-compose up -d
@@ -231,7 +231,7 @@ the fabric-ca-client.
 
 .. code:: bash
 
-    # cd $GOPATH/src/github.com/hyperledger/fabric-ca
+    # cd $GOPATH/src/github.com/extrame/fabric-ca
     # FABRIC_CA_DYNAMIC_LINK=true make docker
     # cd docker/server
     # docker-compose up -d
@@ -1561,7 +1561,7 @@ that are required by the verifier and can do so without being linkable across th
 
 Fabric CA server can issue Idemix credentials in addition to X509 certificates. An Idemix credential can be requested by sending the request to
 the ``/api/v1/idemix/credential`` API endpoint. For more information on this and other Fabric CA server API endpoints, please refer to
-`swagger-fabric-ca.json <https://github.com/hyperledger/fabric-ca/blob/main/swagger/swagger-fabric-ca.json>`_.
+`swagger-fabric-ca.json <https://github.com/extrame/fabric-ca/blob/main/swagger/swagger-fabric-ca.json>`_.
 
 The Idemix credential issuance is a two step process. First, send a request with an empty body to the ``/api/v1/idemix/credential``
 API endpoint to get a nonce and CA's Idemix public key. Second, create a credential request using the nonce and CA's Idemix public key and
@@ -1572,7 +1572,7 @@ Credential Revocation Information (CRI), and attribute names and values. Current
 - **IsAdmin** - if the identity is an admin or not. The value of this attribute is set to the value of `isAdmin` registration attribute.
 - **EnrollmentID** - enrollment ID of the identity
 
-You can refer to the `handleIdemixEnroll` function in https://github.com/hyperledger/fabric-ca/blob/main/lib/client.go for reference implementation
+You can refer to the `handleIdemixEnroll` function in https://github.com/extrame/fabric-ca/blob/main/lib/client.go for reference implementation
 of the two step process for getting Idemix credential.
 
 The ``/api/v1/idemix/credential`` API endpoint accepts both basic and token authorization headers. The basic authorization header should

@@ -10,8 +10,8 @@ import (
 	"io/ioutil"
 
 	"github.com/cloudflare/cfssl/log"
+	"github.com/extrame/fabric-ca/internal/pkg/util"
 	proto "github.com/golang/protobuf/proto"
-	"github.com/hyperledger/fabric-ca/internal/pkg/util"
 	"github.com/hyperledger/fabric/idemix"
 	"github.com/pkg/errors"
 )

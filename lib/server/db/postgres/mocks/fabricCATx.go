@@ -5,7 +5,7 @@ import (
 	sql "database/sql"
 	sync "sync"
 
-	db "github.com/hyperledger/fabric-ca/lib/server/db"
+	db "github.com/extrame/fabric-ca/lib/server/db"
 	sqlx "github.com/jmoiron/sqlx"
 )
 

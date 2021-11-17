@@ -9,7 +9,7 @@ package credential
 import (
 	"net/http"
 
-	"github.com/hyperledger/fabric-ca/internal/pkg/api"
+	"github.com/extrame/fabric-ca/internal/pkg/api"
 )
 
 // Credential represents an credential of an identity

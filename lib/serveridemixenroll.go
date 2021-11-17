@@ -8,9 +8,9 @@ package lib
 
 import (
 	"github.com/cloudflare/cfssl/log"
-	"github.com/hyperledger/fabric-ca/internal/pkg/api"
-	"github.com/hyperledger/fabric-ca/lib/server/idemix"
-	"github.com/hyperledger/fabric-ca/lib/server/user"
+	"github.com/extrame/fabric-ca/internal/pkg/api"
+	"github.com/extrame/fabric-ca/lib/server/idemix"
+	"github.com/extrame/fabric-ca/lib/server/user"
 )
 
 func newIdemixEnrollEndpoint(s *Server) *serverEndpoint {

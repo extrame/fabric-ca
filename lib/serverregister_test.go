@@ -10,12 +10,12 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/hyperledger/fabric-ca/internal/pkg/api"
-	"github.com/hyperledger/fabric-ca/internal/pkg/util"
-	"github.com/hyperledger/fabric-ca/lib/attr"
-	"github.com/hyperledger/fabric-ca/lib/caerrors"
-	"github.com/hyperledger/fabric-ca/lib/mocks"
-	cadbuser "github.com/hyperledger/fabric-ca/lib/server/user"
+	"github.com/extrame/fabric-ca/internal/pkg/api"
+	"github.com/extrame/fabric-ca/internal/pkg/util"
+	"github.com/extrame/fabric-ca/lib/attr"
+	"github.com/extrame/fabric-ca/lib/caerrors"
+	"github.com/extrame/fabric-ca/lib/mocks"
+	cadbuser "github.com/extrame/fabric-ca/lib/server/user"
 	"github.com/stretchr/testify/assert"
 )
 

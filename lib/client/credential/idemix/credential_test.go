@@ -14,9 +14,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	lib "github.com/hyperledger/fabric-ca/lib"
-	. "github.com/hyperledger/fabric-ca/lib/client/credential/idemix"
-	"github.com/hyperledger/fabric-ca/lib/server/idemix"
+	lib "github.com/extrame/fabric-ca/lib"
+	. "github.com/extrame/fabric-ca/lib/client/credential/idemix"
+	"github.com/extrame/fabric-ca/lib/server/idemix"
 	"github.com/stretchr/testify/assert"
 )
 

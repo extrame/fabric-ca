@@ -14,7 +14,7 @@ import (
 	"testing"
 
 	"github.com/cloudflare/cfssl/api"
-	"github.com/hyperledger/fabric-ca/lib/caerrors"
+	"github.com/extrame/fabric-ca/lib/caerrors"
 	"github.com/stretchr/testify/assert"
 )
 

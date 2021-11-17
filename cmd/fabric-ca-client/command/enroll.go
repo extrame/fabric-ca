@@ -7,21 +7,28 @@ SPDX-License-Identifier: Apache-2.0
 package command
 
 import (
+	"context"
 	"io/ioutil"
+	"net"
+	"net/http"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/cloudflare/cfssl/log"
+	"github.com/extrame/fabric-ca/lib"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 type enrollCmd struct {
 	Command
+	IP string
 }
 
 func newEnrollCmd(c Command) *enrollCmd {
-	enrollCmd := &enrollCmd{c}
+	enrollCmd := &enrollCmd{c, ""}
 	return enrollCmd
 }
 
@@ -55,7 +62,22 @@ func (c *enrollCmd) runEnroll(cmd *cobra.Command, args []string) error {
 	log.Debug("Entered runEnroll")
 	cfgFileName := c.GetCfgFileName()
 	cfg := c.GetClientCfg()
-	resp, err := cfg.Enroll(cfg.URL, filepath.Dir(cfgFileName))
+	var resp *lib.EnrollmentResponse
+	var err error
+	if c.IP != "" {
+		dialer := &net.Dialer{
+			Timeout:   15 * time.Second,
+			KeepAlive: 15 * time.Second,
+			// DualStack: true, // this is deprecated as of go 1.16
+		}
+		tr := new(http.Transport)
+		tr.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
+			return dialer.DialContext(ctx, network, c.IP)
+		}
+		resp, err = cfg.Enroll(cfg.URL, filepath.Dir(cfgFileName), tr)
+	} else {
+		resp, err = cfg.Enroll(cfg.URL, filepath.Dir(cfgFileName))
+	}
 	if err != nil {
 		return err
 	}
@@ -89,4 +111,32 @@ func (c *enrollCmd) runEnroll(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	return storeIssuerRevocationPublicKey(cfg, &resp.CAInfo)
+}
+
+//Enroll call enroll function as a library
+//url the server url
+//home the home directory
+//caname the caname
+//ip the ip of server(difference with original library)
+func Enroll(url, home, pem, caname, ip string) error {
+	log.Debug("Entered runEnroll")
+	var myViper = viper.New()
+	myViper.Set("url", url)
+	myViper.Set("tls.certfiles", pem)
+	myViper.Set("caname", caname)
+	clientCmd := &ClientCmd{
+		myViper: myViper,
+	}
+	clientCmd.name = "enroll"
+	clientCmd.homeDirectory = home
+	clientCmd.clientCfg = &lib.ClientConfig{}
+	err := clientCmd.ConfigInit()
+	c := &enrollCmd{clientCmd, ip}
+	if err == nil {
+		err = c.preRunEnroll(nil, []string{})
+		if err == nil {
+			return c.runEnroll(nil, []string{})
+		}
+	}
+	return err
 }

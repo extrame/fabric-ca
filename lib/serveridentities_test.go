@@ -14,11 +14,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/hyperledger/fabric-ca/internal/pkg/api"
-	"github.com/hyperledger/fabric-ca/internal/pkg/util"
-	"github.com/hyperledger/fabric-ca/lib/attr"
-	"github.com/hyperledger/fabric-ca/lib/server/user"
-	cadbuser "github.com/hyperledger/fabric-ca/lib/server/user"
+	"github.com/extrame/fabric-ca/internal/pkg/api"
+	"github.com/extrame/fabric-ca/internal/pkg/util"
+	"github.com/extrame/fabric-ca/lib/attr"
+	"github.com/extrame/fabric-ca/lib/server/user"
+	cadbuser "github.com/extrame/fabric-ca/lib/server/user"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/ocsp"
 )

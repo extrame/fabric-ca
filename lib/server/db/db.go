@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/cloudflare/cfssl/certdb"
-	"github.com/hyperledger/fabric-ca/lib/server/db/util"
+	"github.com/extrame/fabric-ca/lib/server/db/util"
 	"github.com/jmoiron/sqlx"
 )
 

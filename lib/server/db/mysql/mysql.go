@@ -14,10 +14,10 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cfssl/log"
+	"github.com/extrame/fabric-ca/lib/server/db"
+	"github.com/extrame/fabric-ca/lib/server/db/util"
+	"github.com/extrame/fabric-ca/lib/tls"
 	"github.com/go-sql-driver/mysql"
-	"github.com/hyperledger/fabric-ca/lib/server/db"
-	"github.com/hyperledger/fabric-ca/lib/server/db/util"
-	"github.com/hyperledger/fabric-ca/lib/tls"
 	"github.com/hyperledger/fabric/bccsp"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"

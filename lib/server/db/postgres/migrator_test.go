@@ -9,9 +9,9 @@ package postgres_test
 import (
 	"errors"
 
-	"github.com/hyperledger/fabric-ca/lib/server/db/postgres"
-	"github.com/hyperledger/fabric-ca/lib/server/db/postgres/mocks"
-	"github.com/hyperledger/fabric-ca/lib/server/db/util"
+	"github.com/extrame/fabric-ca/lib/server/db/postgres"
+	"github.com/extrame/fabric-ca/lib/server/db/postgres/mocks"
+	"github.com/extrame/fabric-ca/lib/server/db/util"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )

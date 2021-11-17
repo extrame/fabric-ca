@@ -12,7 +12,7 @@ import (
 
 	"github.com/cloudflare/cfssl/api"
 	"github.com/cloudflare/cfssl/log"
-	"github.com/hyperledger/fabric-ca/lib/caerrors"
+	"github.com/extrame/fabric-ca/lib/caerrors"
 )
 
 // serverEndpoint represents a particular endpoint (e.g. to "/api/v1/enroll")

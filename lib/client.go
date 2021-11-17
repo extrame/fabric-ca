@@ -25,15 +25,15 @@ import (
 	cfsslapi "github.com/cloudflare/cfssl/api"
 	"github.com/cloudflare/cfssl/csr"
 	"github.com/cloudflare/cfssl/log"
+	"github.com/extrame/fabric-ca/internal/pkg/api"
+	"github.com/extrame/fabric-ca/internal/pkg/util"
+	"github.com/extrame/fabric-ca/lib/client/credential"
+	idemixcred "github.com/extrame/fabric-ca/lib/client/credential/idemix"
+	x509cred "github.com/extrame/fabric-ca/lib/client/credential/x509"
+	"github.com/extrame/fabric-ca/lib/streamer"
+	"github.com/extrame/fabric-ca/lib/tls"
 	proto "github.com/golang/protobuf/proto"
 	fp256bn "github.com/hyperledger/fabric-amcl/amcl/FP256BN"
-	"github.com/hyperledger/fabric-ca/internal/pkg/api"
-	"github.com/hyperledger/fabric-ca/internal/pkg/util"
-	"github.com/hyperledger/fabric-ca/lib/client/credential"
-	idemixcred "github.com/hyperledger/fabric-ca/lib/client/credential/idemix"
-	x509cred "github.com/hyperledger/fabric-ca/lib/client/credential/x509"
-	"github.com/hyperledger/fabric-ca/lib/streamer"
-	"github.com/hyperledger/fabric-ca/lib/tls"
 	"github.com/hyperledger/fabric/bccsp"
 	cspsigner "github.com/hyperledger/fabric/bccsp/signer"
 	"github.com/hyperledger/fabric/idemix"
@@ -81,7 +81,7 @@ type EnrollmentResponse struct {
 }
 
 // Init initializes the client
-func (c *Client) Init() error {
+func (c *Client) Init(trs ...*http.Transport) error {
 	if !c.initialized {
 		cfg := c.Config
 		log.Debugf("Initializing client with config: %+v", cfg)
@@ -133,7 +133,7 @@ func (c *Client) Init() error {
 			return err
 		}
 		// Create http.Client object and associate it with this client
-		err = c.initHTTPClient()
+		err = c.initHTTPClient(trs...)
 		if err != nil {
 			return err
 		}
@@ -144,8 +144,13 @@ func (c *Client) Init() error {
 	return nil
 }
 
-func (c *Client) initHTTPClient() error {
-	tr := new(http.Transport)
+func (c *Client) initHTTPClient(trs ...*http.Transport) error {
+	var tr *http.Transport
+	if trs == nil || len(trs) == 0 || trs[0] == nil {
+		tr = new(http.Transport)
+	} else {
+		tr = trs[0]
+	}
 	if c.Config.TLS.Enabled {
 		log.Info("TLS Enabled")
 
@@ -269,10 +274,10 @@ func (c *Client) generateCSPSigner(cr *csr.CertificateRequest, key bccsp.Key) (c
 
 // Enroll enrolls a new identity
 // @param req The enrollment request
-func (c *Client) Enroll(req *api.EnrollmentRequest) (*EnrollmentResponse, error) {
+func (c *Client) Enroll(req *api.EnrollmentRequest, trs ...*http.Transport) (*EnrollmentResponse, error) {
 	log.Debugf("Enrolling %+v", req)
 
-	err := c.Init()
+	err := c.Init(trs...)
 	if err != nil {
 		return nil, err
 	}

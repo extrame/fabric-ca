@@ -20,7 +20,7 @@ import (
 	"strings"
 	"testing"
 
-	. "github.com/hyperledger/fabric-ca/lib/streamer"
+	. "github.com/extrame/fabric-ca/lib/streamer"
 	"github.com/stretchr/testify/assert"
 )
 

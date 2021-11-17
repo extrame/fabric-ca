@@ -17,9 +17,9 @@ import (
 	"time"
 
 	"github.com/cloudflare/cfssl/log"
+	"github.com/extrame/fabric-ca/lib/metadata"
 	kitstatsd "github.com/go-kit/kit/metrics/statsd"
 	"github.com/gorilla/mux"
-	"github.com/hyperledger/fabric-ca/lib/metadata"
 	"github.com/hyperledger/fabric-lib-go/healthz"
 	"github.com/hyperledger/fabric/common/metrics"
 	"github.com/hyperledger/fabric/common/metrics/disabled"
