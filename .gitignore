@@ -21,6 +21,6 @@ testdata/fabric-ca-key.pem
 testdata/initFabricCaFvt.json
 testdata/openssl.cnf.base.this
 testdata/runFabricCaFvt.json
-vendor/github.com/cloudflare/cfssl/vendor/github.com/cloudflare/cfssl_trust/ca-bundle/http:*.crt
+vendor
 .tox/
 .vscode

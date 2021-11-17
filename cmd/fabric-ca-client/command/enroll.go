@@ -7,13 +7,9 @@ SPDX-License-Identifier: Apache-2.0
 package command
 
 import (
-	"context"
 	"io/ioutil"
-	"net"
-	"net/http"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/lib"
@@ -24,11 +20,10 @@ import (
 
 type enrollCmd struct {
 	Command
-	IP string
 }
 
 func newEnrollCmd(c Command) *enrollCmd {
-	enrollCmd := &enrollCmd{c, ""}
+	enrollCmd := &enrollCmd{c}
 	return enrollCmd
 }
 
@@ -64,20 +59,7 @@ func (c *enrollCmd) runEnroll(cmd *cobra.Command, args []string) error {
 	cfg := c.GetClientCfg()
 	var resp *lib.EnrollmentResponse
 	var err error
-	if c.IP != "" {
-		dialer := &net.Dialer{
-			Timeout:   15 * time.Second,
-			KeepAlive: 15 * time.Second,
-			// DualStack: true, // this is deprecated as of go 1.16
-		}
-		tr := new(http.Transport)
-		tr.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
-			return dialer.DialContext(ctx, network, c.IP)
-		}
-		resp, err = cfg.Enroll(cfg.URL, filepath.Dir(cfgFileName), tr)
-	} else {
-		resp, err = cfg.Enroll(cfg.URL, filepath.Dir(cfgFileName))
-	}
+	resp, err = cfg.Enroll(cfg.URL, filepath.Dir(cfgFileName))
 	if err != nil {
 		return err
 	}
@@ -119,20 +101,12 @@ func (c *enrollCmd) runEnroll(cmd *cobra.Command, args []string) error {
 //mspdir the mspdir of output
 //caname the caname
 //ip the ip of server(difference with original library)
-func Enroll(url, home, mspdir string, csrhosts []string, enrollment_profile, pem, caname, ip string) error {
-	log.Debug("Entered runEnroll")
+func Enroll(home string, attrs map[string]interface{}, ips ...string) error {
 	var myViper = viper.New()
-	myViper.Set("url", url)
-	myViper.Set("tls.certfiles", pem)
-	myViper.Set("caname", caname)
-	if mspdir != "" {
-		myViper.Set("mspdir", mspdir)
-	}
-	if csrhosts != nil {
-		myViper.Set("csr.hosts", csrhosts)
-	}
-	if enrollment_profile != "" {
-		myViper.Set("enrollment.profile", enrollment_profile)
+	if attrs != nil {
+		for k, v := range attrs {
+			myViper.Set(k, v)
+		}
 	}
 	clientCmd := &ClientCmd{
 		myViper: myViper,
@@ -141,7 +115,10 @@ func Enroll(url, home, mspdir string, csrhosts []string, enrollment_profile, pem
 	clientCmd.homeDirectory = home
 	clientCmd.clientCfg = &lib.ClientConfig{}
 	err := clientCmd.ConfigInit()
-	c := &enrollCmd{clientCmd, ip}
+	if len(ips) > 0 && ips[0] != "" {
+		clientCmd.clientCfg.IP = ips[0]
+	}
+	c := &enrollCmd{clientCmd}
 	if err == nil {
 		err = c.preRunEnroll(nil, []string{})
 		if err == nil {

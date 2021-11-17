@@ -8,6 +8,7 @@ package lib
 
 import (
 	"bytes"
+	"context"
 	"crypto"
 	"encoding/hex"
 	"encoding/json"
@@ -21,6 +22,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	cfsslapi "github.com/cloudflare/cfssl/api"
 	"github.com/cloudflare/cfssl/csr"
@@ -81,7 +83,7 @@ type EnrollmentResponse struct {
 }
 
 // Init initializes the client
-func (c *Client) Init(trs ...*http.Transport) error {
+func (c *Client) Init() error {
 	if !c.initialized {
 		cfg := c.Config
 		log.Debugf("Initializing client with config: %+v", cfg)
@@ -133,7 +135,7 @@ func (c *Client) Init(trs ...*http.Transport) error {
 			return err
 		}
 		// Create http.Client object and associate it with this client
-		err = c.initHTTPClient(trs...)
+		err = c.initHTTPClient()
 		if err != nil {
 			return err
 		}
@@ -144,12 +146,20 @@ func (c *Client) Init(trs ...*http.Transport) error {
 	return nil
 }
 
-func (c *Client) initHTTPClient(trs ...*http.Transport) error {
+func (c *Client) initHTTPClient() error {
 	var tr *http.Transport
-	if trs == nil || len(trs) == 0 || trs[0] == nil {
+	if c.Config.GetCustomizedIP() != "" {
+		dialer := &net.Dialer{
+			Timeout:   15 * time.Second,
+			KeepAlive: 15 * time.Second,
+			// DualStack: true, // this is deprecated as of go 1.16
+		}
 		tr = new(http.Transport)
+		tr.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
+			return dialer.DialContext(ctx, network, c.Config.GetCustomizedIP())
+		}
 	} else {
-		tr = trs[0]
+		tr = new(http.Transport)
 	}
 	if c.Config.TLS.Enabled {
 		log.Info("TLS Enabled")
@@ -274,10 +284,10 @@ func (c *Client) generateCSPSigner(cr *csr.CertificateRequest, key bccsp.Key) (c
 
 // Enroll enrolls a new identity
 // @param req The enrollment request
-func (c *Client) Enroll(req *api.EnrollmentRequest, trs ...*http.Transport) (*EnrollmentResponse, error) {
+func (c *Client) Enroll(req *api.EnrollmentRequest) (*EnrollmentResponse, error) {
 	log.Debugf("Enrolling %+v", req)
 
-	err := c.Init(trs...)
+	err := c.Init()
 	if err != nil {
 		return nil, err
 	}

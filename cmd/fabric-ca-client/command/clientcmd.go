@@ -110,6 +110,8 @@ type ClientCmd struct {
 	dynamicAffiliation affiliationArgs
 	// Set to log level
 	logLevel string
+	// Set the remote ip
+	ip string
 }
 
 // NewCommand returns new ClientCmd ready for running

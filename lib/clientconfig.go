@@ -18,7 +18,6 @@ package lib
 
 import (
 	"fmt"
-	"net/http"
 	"net/url"
 	"path"
 
@@ -44,12 +43,17 @@ type ClientConfig struct {
 	CSP        *factory.FactoryOpts `mapstructure:"bccsp" hide:"true"`
 	Debug      bool                 `opt:"d" help:"Enable debug level logging" hide:"true"`
 	LogLevel   string               `help:"Set logging level (info, warning, debug, error, fatal, critical)"`
+	IP         string
+}
+
+func (c *ClientConfig) GetCustomizedIP() string {
+	return c.IP
 }
 
 // Enroll a client given the server's URL and the client's home directory.
 // The URL may be of the form: http://user:pass@host:port where user and pass
 // are the enrollment ID and secret, respectively.
-func (c *ClientConfig) Enroll(rawurl, home string, trs ...*http.Transport) (*EnrollmentResponse, error) {
+func (c *ClientConfig) Enroll(rawurl, home string) (*EnrollmentResponse, error) {
 	purl, err := url.Parse(rawurl)
 	if err != nil {
 		return nil, err
@@ -74,7 +78,7 @@ func (c *ClientConfig) Enroll(rawurl, home string, trs ...*http.Transport) (*Enr
 	c.TLS.Enabled = purl.Scheme == "https"
 	c.Enrollment.CSR = &c.CSR
 	client := &Client{HomeDir: home, Config: c}
-	return client.Enroll(&c.Enrollment, trs...)
+	return client.Enroll(&c.Enrollment)
 }
 
 // GenCSR generates a certificate signing request and writes the CSR to a file.

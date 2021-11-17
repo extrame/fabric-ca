@@ -24,6 +24,7 @@ import (
 	"github.com/extrame/fabric-ca/lib"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func (c *ClientCmd) newRegisterCommand() *cobra.Command {
@@ -82,4 +83,27 @@ func (c *ClientCmd) runRegister() error {
 	fmt.Printf("Password: %s\n", resp.Secret)
 
 	return nil
+}
+
+func Register(home string, attrs map[string]interface{}, ips ...string) error {
+	var myViper = viper.New()
+	if attrs != nil {
+		for k, v := range attrs {
+			myViper.Set(k, v)
+		}
+	}
+	clientCmd := &ClientCmd{
+		myViper: myViper,
+	}
+	clientCmd.name = "register"
+	clientCmd.homeDirectory = home
+	clientCmd.clientCfg = &lib.ClientConfig{}
+	err := clientCmd.ConfigInit()
+	if len(ips) > 0 && ips[0] != "" {
+		clientCmd.clientCfg.IP = ips[0]
+	}
+	if err == nil {
+		err = clientCmd.runRegister()
+	}
+	return err
 }
