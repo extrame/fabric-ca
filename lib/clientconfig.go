@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"net/url"
 	"path"
+	"strings"
 
 	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/internal/pkg/api"
@@ -107,5 +108,34 @@ func (c *ClientConfig) GenCSR(home string) error {
 		return errors.WithMessage(err, "Failed to store the CSR")
 	}
 	log.Infof("Stored CSR at %s", csrFile)
+	return nil
+}
+
+// ProcessAttributeStrings parses attribute requests from strings
+// Each string is of the form: <attrName>[:opt] where "opt" means the attribute is
+// optional and will not return an error if the identity does not possess the attribute.
+// The default is that each attribute name listed is required and so the identity must
+// possess the attribute.
+func (cfg *ClientConfig) ProcessAttributeStrings(cfgAttrReqs []string) error {
+	if len(cfgAttrReqs) == 0 {
+		return nil
+	}
+	reqs := make([]*api.AttributeRequest, len(cfgAttrReqs))
+	for idx, req := range cfgAttrReqs {
+		sreq := strings.Split(req, ":")
+		name := sreq[0]
+		switch len(sreq) {
+		case 1:
+			reqs[idx] = &api.AttributeRequest{Name: name}
+		case 2:
+			if sreq[1] != "opt" {
+				return errors.Errorf("Invalid option in attribute request specification at '%s'; the value after the colon must be 'opt'", req)
+			}
+			reqs[idx] = &api.AttributeRequest{Name: name, Optional: true}
+		default:
+			return errors.Errorf("Multiple ':' characters not allowed in attribute request specification; error at '%s'", req)
+		}
+	}
+	cfg.Enrollment.AttrReqs = reqs
 	return nil
 }
