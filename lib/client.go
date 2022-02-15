@@ -82,6 +82,11 @@ type EnrollmentResponse struct {
 	CAInfo   GetCAInfoResponse
 }
 
+// RegistrationResponse is a registration response
+type RegistrationResponse struct {
+	api.RegistrationResponse
+}
+
 // Init initializes the client
 func (c *Client) Init() error {
 	if !c.initialized {
