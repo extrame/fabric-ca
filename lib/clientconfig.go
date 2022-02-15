@@ -143,7 +143,7 @@ func (cfg *ClientConfig) ProcessAttributeStrings(cfgAttrReqs []string) error {
 
 // Register registers a new identity
 // @param req The registration request
-func (c *ClientConfig) Register(home string, cred credential.Credential, req *api.RegistrationRequest) (rr *RegistrationResponse, err error) {
+func (c *ClientConfig) Register(home string, cred credential.Credential, req *RegistrationRequest) (rr *RegistrationResponse, err error) {
 	log.Debugf("Register %+v", req)
 	if req.Name == "" {
 		return nil, errors.New("Register was called without a Name set")

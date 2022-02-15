@@ -82,6 +82,10 @@ type EnrollmentResponse struct {
 	CAInfo   GetCAInfoResponse
 }
 
+type RegistrationRequest struct {
+	api.RegistrationRequest
+}
+
 // RegistrationResponse is a registration response
 type RegistrationResponse struct {
 	api.RegistrationResponse
