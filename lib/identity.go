@@ -85,7 +85,7 @@ func (i *Identity) GetECert() *x509.Signer {
 
 // Register registers a new identity
 // @param req The registration request
-func (i *Identity) Register(req *api.RegistrationRequest) (rr *api.RegistrationResponse, err error) {
+func (i *Identity) Register(req *api.RegistrationRequest) (rr *RegistrationResponse, err error) {
 	log.Debugf("Register %+v", req)
 	if req.Name == "" {
 		return nil, errors.New("Register was called without a Name set")
@@ -97,7 +97,7 @@ func (i *Identity) Register(req *api.RegistrationRequest) (rr *api.RegistrationR
 	}
 
 	// Send a post to the "register" endpoint with req as body
-	resp := &api.RegistrationResponse{}
+	resp := &RegistrationResponse{}
 	err = i.Post("register", reqBody, resp, nil)
 	if err != nil {
 		return nil, err
