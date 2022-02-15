@@ -142,7 +142,7 @@ func (cfg *ClientConfig) ProcessAttributeStrings(cfgAttrReqs []string) error {
 
 // Register registers a new identity
 // @param req The registration request
-func (c *ClientConfig) Register(home string, keyFile string, certFile string, idemixCredFile string) (rr *RegistrationResponse, err error) {
+func (c *ClientConfig) Register(home string) (rr *RegistrationResponse, err error) {
 
 	client := &Client{HomeDir: home, Config: c}
 	client.HomeDir = home
