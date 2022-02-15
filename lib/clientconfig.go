@@ -25,6 +25,7 @@ import (
 	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/internal/pkg/api"
 	"github.com/extrame/fabric-ca/internal/pkg/util"
+	"github.com/extrame/fabric-ca/lib/client/credential"
 	"github.com/extrame/fabric-ca/lib/tls"
 	"github.com/hyperledger/fabric/bccsp/factory"
 	"github.com/pkg/errors"
@@ -138,4 +139,24 @@ func (cfg *ClientConfig) ProcessAttributeStrings(cfgAttrReqs []string) error {
 	}
 	cfg.Enrollment.AttrReqs = reqs
 	return nil
+}
+
+// Register registers a new identity
+// @param req The registration request
+func (c *ClientConfig) Register(home string, cred credential.Credential, req *api.RegistrationRequest) (rr *api.RegistrationResponse, err error) {
+	log.Debugf("Register %+v", req)
+	if req.Name == "" {
+		return nil, errors.New("Register was called without a Name set")
+	}
+
+	reqBody, err := util.Marshal(req, "RegistrationRequest")
+	if err != nil {
+		return nil, err
+	}
+
+	// Send a post to the "register" endpoint with req as body
+	resp := &api.RegistrationResponse{}
+
+	client := &Client{HomeDir: home, Config: c}
+	return resp, client.AuthAndPost(cred, "register", reqBody, resp, nil)
 }

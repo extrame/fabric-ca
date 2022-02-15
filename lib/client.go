@@ -723,6 +723,31 @@ func (c *Client) GetIssuerPubKey() (*idemix.IssuerPublicKey, error) {
 	return c.issuerPublicKey, nil
 }
 
+func (c *Client) AuthAndPost(cred credential.Credential, endpoint string, reqBody []byte, result interface{}, queryParam map[string]string) error {
+	req, err := c.newPost(endpoint, reqBody)
+	if err != nil {
+		return err
+	}
+	for key, value := range queryParam {
+		addQueryParm(req, key, value)
+	}
+	err = c.addTokenAuthHdr(cred, req, reqBody)
+	if err != nil {
+		return err
+	}
+	return c.SendReq(req, result)
+}
+
+func (c *Client) addTokenAuthHdr(cred credential.Credential, req *http.Request, body []byte) error {
+	log.Debug("Adding token-based authorization header")
+	token, err := cred.CreateToken(req, body)
+	if err != nil {
+		return errors.WithMessage(err, "Failed to add token authorization header")
+	}
+	req.Header.Set("authorization", token)
+	return nil
+}
+
 // newGet create a new GET request
 func (c *Client) newGet(endpoint string) (*http.Request, error) {
 	curl, err := c.getURL(endpoint)
