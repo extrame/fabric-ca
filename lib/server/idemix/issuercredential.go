@@ -106,13 +106,13 @@ func (ic *caIdemixCredential) Store() error {
 		return errors.New("Failed to marshal Issuer public key")
 	}
 
-	err = util.WriteFile(ic.pubKeyFile, ipkBytes, 0644)
+	err = util.WriteFileTODO(ic.pubKeyFile, ipkBytes, 0644)
 	if err != nil {
 		log.Errorf("Failed to store Issuer public key: %s", err.Error())
 		return errors.New("Failed to store Issuer public key")
 	}
 
-	err = util.WriteFile(ic.secretKeyFile, ik.Isk, 0644)
+	err = util.WriteFileTODO(ic.secretKeyFile, ik.Isk, 0644)
 	if err != nil {
 		log.Errorf("Failed to store Issuer secret key: %s", err.Error())
 		return errors.New("Failed to store Issuer secret key")

@@ -80,7 +80,7 @@ func TestLoadFakeRevocationPublicKey(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to encode test revocation key: %s", err.Error())
 	}
-	err = util.WriteFile(privkeyfile.Name(), privKey, 0666)
+	err = util.WriteFileTODO(privkeyfile.Name(), privKey, 0666)
 	if err != nil {
 		t.Fatalf("Failed to write test revocation private key: %s", err.Error())
 	}
@@ -207,7 +207,7 @@ func TestStoreReadonlyRevocationPublicKeyFilepath(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to encode test revocation key: %s", err.Error())
 	}
-	err = util.WriteFile(privkeyfile.Name(), privKey, 0666)
+	err = util.WriteFileTODO(privkeyfile.Name(), privKey, 0666)
 	if err != nil {
 		t.Fatalf("Failed to write test revocation private key: %s", err.Error())
 	}

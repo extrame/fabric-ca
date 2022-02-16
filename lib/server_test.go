@@ -157,7 +157,7 @@ func TestSRVServerInit(t *testing.T) {
 func TestSRVRootServer(t *testing.T) {
 	var err error
 	var admin, user1 *Identity
-	var rr *api.RegistrationResponse
+	var rr *RegistrationResponse
 	var recs []db.CertRecord
 
 	// Start the server
@@ -1755,7 +1755,7 @@ func TestTLSCertIssuance(t *testing.T) {
 	// Write the TLS certificate to disk
 	os.MkdirAll(testDir, 0755)
 	tlsCertFile := path.Join(testDir, "tls-cert.pem")
-	err = util.WriteFile(tlsCertFile, tlsCertBytes, 0644)
+	err = client.WriteFile(tlsCertFile, tlsCertBytes, 0644)
 	if err != nil {
 		t.Fatalf("Failed to write TLS certificate file: %s", err)
 	}

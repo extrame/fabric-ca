@@ -82,7 +82,7 @@ func ReadFile(file string) ([]byte, error) {
 }
 
 // WriteFile writes a file
-func WriteFile(file string, buf []byte, perm os.FileMode) error {
+func WriteFileTODO(file string, buf []byte, perm os.FileMode) error {
 	dir := path.Dir(file)
 	// Create the directory if it doesn't exist
 	if _, err := os.Stat(dir); os.IsNotExist(err) {

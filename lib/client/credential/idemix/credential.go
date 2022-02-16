@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/internal/pkg/api"
@@ -30,6 +31,7 @@ const (
 type Client interface {
 	GetIssuerPubKey() (*idemix.IssuerPublicKey, error)
 	GetCSP() bccsp.BCCSP
+	WriteFile(file string, buf []byte, perm os.FileMode) error
 }
 
 // Credential represents an Idemix credential. Implements Credential interface
@@ -88,7 +90,7 @@ func (cred *Credential) Store() error {
 	if err != nil {
 		return errors.Wrapf(err, "Failed to marshal SignerConfig")
 	}
-	err = util.WriteFile(cred.signerConfigFile, signerConfigBytes, 0644)
+	err = cred.client.WriteFile(cred.signerConfigFile, signerConfigBytes, 0644)
 	if err != nil {
 		return errors.WithMessage(err, "Failed to store the Idemix credential")
 	}

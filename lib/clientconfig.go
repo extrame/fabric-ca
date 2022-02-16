@@ -24,7 +24,6 @@ import (
 
 	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/internal/pkg/api"
-	"github.com/extrame/fabric-ca/internal/pkg/util"
 	"github.com/extrame/fabric-ca/lib/tls"
 	"github.com/hyperledger/fabric/bccsp/factory"
 	"github.com/pkg/errors"
@@ -34,6 +33,7 @@ import (
 type ClientConfig struct {
 	URL        string `def:"http://localhost:7054" opt:"u" help:"URL of fabric-ca-server"`
 	MSPDir     string `def:"msp" opt:"M" help:"Membership Service Provider directory"`
+	MSPType    string `def:"file" help:"The Msp storage type [file/wallet/inmemory]"`
 	TLS        tls.ClientTLSConfig
 	Enrollment api.EnrollmentRequest
 	CSR        api.CSRInfo
@@ -45,6 +45,17 @@ type ClientConfig struct {
 	Debug      bool                 `opt:"d" help:"Enable debug level logging" hide:"true"`
 	LogLevel   string               `help:"Set logging level (info, warning, debug, error, fatal, critical)"`
 	IP         string
+}
+
+func (c *ClientConfig) GetMSPProvider() MSPProvider {
+	if c.MSPType == "" {
+		c.MSPType = "file"
+	}
+	msp, ok := registeredMSPProvider[c.MSPType]
+	if ok {
+		msp.SetRoot(c.MSPDir)
+	}
+	return msp
 }
 
 func (c *ClientConfig) GetCustomizedIP() string {
@@ -103,7 +114,7 @@ func (c *ClientConfig) GenCSR(home string) error {
 	}
 
 	csrFile := path.Join(client.Config.MSPDir, "signcerts", fmt.Sprintf("%s.csr", c.CSR.CN))
-	err = util.WriteFile(csrFile, csrPEM, 0644)
+	err = c.GetMSPProvider().WriteFile(csrFile, csrPEM, 0644)
 	if err != nil {
 		return errors.WithMessage(err, "Failed to store the CSR")
 	}

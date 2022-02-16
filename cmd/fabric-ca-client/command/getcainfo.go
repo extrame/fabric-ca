@@ -22,14 +22,11 @@ import (
 	"encoding/pem"
 	"fmt"
 	"net/url"
-	"os"
-	"path"
 	"path/filepath"
 	"strings"
 
 	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/internal/pkg/api"
-	"github.com/extrame/fabric-ca/internal/pkg/util"
 	"github.com/extrame/fabric-ca/lib"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -109,7 +106,7 @@ func (c *getCAInfoCmd) runGetCACert(cmd *cobra.Command, args []string) error {
 // The root cert in the chain goes into MSP 'cacerts' directory.
 // The others (if any) go into the MSP 'intermediatecerts' directory.
 func storeCAChain(config *lib.ClientConfig, si *lib.GetCAInfoResponse) error {
-	mspDir := config.MSPDir
+	// mspDir := config.MSPDir
 	// Get a unique name to use for filenames
 	serverURL, err := url.Parse(config.URL)
 	if err != nil {
@@ -123,10 +120,10 @@ func storeCAChain(config *lib.ClientConfig, si *lib.GetCAInfoResponse) error {
 	fname = strings.Replace(fname, ".", "-", -1) + ".pem"
 	tlsfname := fmt.Sprintf("tls-%s", fname)
 
-	rootCACertsDir := path.Join(mspDir, "cacerts")
-	intCACertsDir := path.Join(mspDir, "intermediatecerts")
-	tlsRootCACertsDir := path.Join(mspDir, "tlscacerts")
-	tlsIntCACertsDir := path.Join(mspDir, "tlsintermediatecerts")
+	rootCACertsDir := "cacerts"
+	intCACertsDir := "intermediatecerts"
+	tlsRootCACertsDir := "tlscacerts"
+	tlsIntCACertsDir := "tlsintermediatecerts"
 
 	var rootBlks [][]byte
 	var intBlks [][]byte
@@ -160,12 +157,12 @@ func storeCAChain(config *lib.ClientConfig, si *lib.GetCAInfoResponse) error {
 	certBytes := bytes.Join(rootBlks, []byte(""))
 	if len(certBytes) > 0 {
 		if config.Enrollment.Profile == "tls" {
-			err := storeToFile("TLS root CA certificate", tlsRootCACertsDir, tlsfname, certBytes)
+			err := storeToFile("TLS root CA certificate", config, filepath.Join(tlsRootCACertsDir, tlsfname), certBytes)
 			if err != nil {
 				return err
 			}
 		} else {
-			err = storeToFile("root CA certificate", rootCACertsDir, fname, certBytes)
+			err = storeToFile("root CA certificate", config, filepath.Join(rootCACertsDir, fname), certBytes)
 			if err != nil {
 				return err
 			}
@@ -176,12 +173,12 @@ func storeCAChain(config *lib.ClientConfig, si *lib.GetCAInfoResponse) error {
 	certBytes = bytes.Join(intBlks, []byte(""))
 	if len(certBytes) > 0 {
 		if config.Enrollment.Profile == "tls" {
-			err = storeToFile("TLS intermediate certificates", tlsIntCACertsDir, tlsfname, certBytes)
+			err = storeToFile("TLS intermediate certificates", config, filepath.Join(tlsIntCACertsDir, tlsfname), certBytes)
 			if err != nil {
 				return err
 			}
 		} else {
-			err = storeToFile("intermediate CA certificates", intCACertsDir, fname, certBytes)
+			err = storeToFile("intermediate CA certificates", config, filepath.Join(intCACertsDir, fname), certBytes)
 			if err != nil {
 				return err
 			}
@@ -192,7 +189,7 @@ func storeCAChain(config *lib.ClientConfig, si *lib.GetCAInfoResponse) error {
 
 func storeIssuerPublicKey(config *lib.ClientConfig, si *lib.GetCAInfoResponse) error {
 	if len(si.IssuerPublicKey) > 0 {
-		err := storeToFile("Issuer public key", config.MSPDir, "IssuerPublicKey", si.IssuerPublicKey)
+		err := storeToFile("Issuer public key", config, "IssuerPublicKey", si.IssuerPublicKey)
 		if err != nil {
 			return err
 		}
@@ -202,7 +199,7 @@ func storeIssuerPublicKey(config *lib.ClientConfig, si *lib.GetCAInfoResponse) e
 
 func storeIssuerRevocationPublicKey(config *lib.ClientConfig, si *lib.GetCAInfoResponse) error {
 	if len(si.IssuerRevocationPublicKey) > 0 {
-		err := storeToFile("Issuer revocation public key", config.MSPDir, "IssuerRevocationPublicKey", si.IssuerRevocationPublicKey)
+		err := storeToFile("Issuer revocation public key", config, "IssuerRevocationPublicKey", si.IssuerRevocationPublicKey)
 		if err != nil {
 			return err
 		}
@@ -210,16 +207,11 @@ func storeIssuerRevocationPublicKey(config *lib.ClientConfig, si *lib.GetCAInfoR
 	return nil
 }
 
-func storeToFile(what, dir, fname string, contents []byte) error {
-	err := os.MkdirAll(dir, 0755)
+func storeToFile(what string, config *lib.ClientConfig, fname string, contents []byte) error {
+	err := config.GetMSPProvider().WriteFile(fname, contents, 0644)
 	if err != nil {
-		return errors.Wrapf(err, "Failed to create directory for %s at '%s'", what, dir)
+		return errors.WithMessage(err, fmt.Sprintf("Failed to store %s at '%s'", what, fname))
 	}
-	fpath := path.Join(dir, fname)
-	err = util.WriteFile(fpath, contents, 0644)
-	if err != nil {
-		return errors.WithMessage(err, fmt.Sprintf("Failed to store %s at '%s'", what, fpath))
-	}
-	log.Infof("Stored %s at %s", what, fpath)
+	log.Infof("Stored %s at %s", what, fname)
 	return nil
 }

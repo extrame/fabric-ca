@@ -59,6 +59,8 @@ type Client struct {
 	httpClient *http.Client
 	// Public key of Idemix issuer
 	issuerPublicKey *idemix.IssuerPublicKey
+	// the mspprovider
+	mspProvider MSPProvider
 }
 
 // GetCAInfoResponse is the response from the GetCAInfo call
@@ -148,6 +150,8 @@ func (c *Client) Init() error {
 		if err != nil {
 			return err
 		}
+
+		c.mspProvider = c.Config.GetMSPProvider()
 
 		// Successfully initialized the client
 		c.initialized = true
@@ -998,6 +1002,11 @@ func (c *Client) verifyIdemixCredential() error {
 		return errors.Wrap(err, "Idemix credential is not cryptographically valid")
 	}
 	return nil
+}
+
+// WriteFile writes a file
+func (f *Client) WriteFile(file string, buf []byte, perm os.FileMode) error {
+	return f.mspProvider.WriteFile(file, buf, perm)
 }
 
 func newCfsslKeyRequest(bkr *api.KeyRequest) *csr.KeyRequest {

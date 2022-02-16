@@ -146,7 +146,7 @@ func BenchmarkEnroll(b *testing.B) {
 		if err != nil {
 			b.Fatalf("Failed to register user %s: %s", userName, err)
 		}
-		req, err := createEnrollRequest(admin, userName, regRes)
+		req, err := createEnrollRequest(admin, userName, &regRes.RegistrationResponse)
 		if err != nil {
 			b.Fatalf("Failed to create enrollment request: %s", err)
 		}

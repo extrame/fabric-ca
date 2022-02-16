@@ -313,7 +313,7 @@ func (ca *CA) getCACert() (cert []byte, err error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "Failed to create intermediate chain file directory")
 		}
-		err = util.WriteFile(chainPath, chain, 0644)
+		err = clientCfg.GetMSPProvider().WriteFile(chainPath, chain, 0644)
 		if err != nil {
 			return nil, errors.WithMessage(err, "Failed to create intermediate chain file")
 		}

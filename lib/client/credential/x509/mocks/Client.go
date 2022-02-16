@@ -8,6 +8,9 @@ SPDX-License-Identifier: Apache-2.0
 package mocks
 
 import (
+	"os"
+
+	"github.com/extrame/fabric-ca/internal/pkg/util"
 	credential "github.com/extrame/fabric-ca/lib/client/credential"
 	bccsp "github.com/hyperledger/fabric/bccsp"
 	mock "github.com/stretchr/testify/mock"
@@ -50,4 +53,8 @@ func (_m *Client) NewX509Identity(name string, creds []credential.Credential) x5
 	}
 
 	return r0
+}
+
+func (_m *Client) WriteFile(name string, contents []byte, perm os.FileMode) error {
+	return util.WriteFileTODO(name, contents, perm)
 }

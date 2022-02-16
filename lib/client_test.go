@@ -180,7 +180,7 @@ func TestIdemixEnroll(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get CA info: %s", err)
 	}
-	err = util.WriteFile(filepath.Join(clientHome, "msp/IssuerPublicKey"), cainfo.IssuerPublicKey, 0644)
+	err = client.WriteFile(filepath.Join(clientHome, "msp/IssuerPublicKey"), cainfo.IssuerPublicKey, 0644)
 	if err != nil {
 		t.Fatalf("Failed to store CA's idemix public key: %s", err)
 	}
@@ -282,7 +282,7 @@ func TestGetCRIUsingIdemixToken(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get CA info: %s", err)
 	}
-	err = util.WriteFile(filepath.Join(clientHome, "msp/IssuerPublicKey"), cainfo.IssuerPublicKey, 0644)
+	err = client.WriteFile(filepath.Join(clientHome, "msp/IssuerPublicKey"), cainfo.IssuerPublicKey, 0644)
 	if err != nil {
 		t.Fatalf("Failed to store CA's idemix public key: %s", err)
 	}
@@ -344,7 +344,7 @@ func TestGetCRIUsingX509Token(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get CA info: %s", err)
 	}
-	err = util.WriteFile(filepath.Join(clientHome, "msp/IssuerPublicKey"), cainfo.IssuerPublicKey, 0644)
+	err = client.WriteFile(filepath.Join(clientHome, "msp/IssuerPublicKey"), cainfo.IssuerPublicKey, 0644)
 	if err != nil {
 		t.Fatalf("Failed to store CA's idemix public key: %s", err)
 	}

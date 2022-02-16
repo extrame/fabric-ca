@@ -10,6 +10,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/internal/pkg/api"
@@ -28,6 +29,7 @@ const (
 type Client interface {
 	NewX509Identity(name string, creds []credential.Credential) Identity
 	GetCSP() bccsp.BCCSP
+	WriteFile(file string, buf []byte, perm os.FileMode) error
 }
 
 // Identity represents an identity
@@ -114,7 +116,7 @@ func (cred *Credential) Store() error {
 	if cred.val == nil {
 		return errors.New("X509 Credential value is not set")
 	}
-	err := util.WriteFile(cred.certFile, cred.val.Cert(), 0644)
+	err := cred.client.WriteFile(cred.certFile, cred.val.Cert(), 0644)
 	if err != nil {
 		return errors.WithMessage(err, "Failed to store the certificate")
 	}

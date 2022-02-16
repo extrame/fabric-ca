@@ -85,13 +85,13 @@ func (rk *caIdemixRevocationKey) Store() error {
 	if err != nil {
 		return errors.WithMessage(err, "Failed to encode revocation public key")
 	}
-	err = util.WriteFile(rk.privateKeyFile, []byte(pkBytes), 0644)
+	err = util.WriteFileTODO(rk.privateKeyFile, []byte(pkBytes), 0644)
 	if err != nil {
 		log.Errorf("Failed to store revocation private key: %s", err.Error())
 		return errors.Wrapf(err, "Failed to store revocation private key at %s", rk.privateKeyFile)
 	}
 
-	err = util.WriteFile(rk.pubKeyFile, []byte(pubKeyBytes), 0644)
+	err = util.WriteFileTODO(rk.pubKeyFile, []byte(pubKeyBytes), 0644)
 	if err != nil {
 		log.Errorf("Failed to store revocation public key: %s", err.Error())
 		return errors.Wrapf(err, "Failed to store revocation public key at %s", rk.pubKeyFile)

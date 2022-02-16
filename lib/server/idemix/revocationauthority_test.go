@@ -54,11 +54,11 @@ func TestRevocationKeyLoadError(t *testing.T) {
 	}
 	revocationpubkeyfile := path.Join(homeDir, DefaultRevocationPublicKeyFile)
 	revocationprivkeyfile := path.Join(homeDir, "msp/keystore", DefaultRevocationPrivateKeyFile)
-	err = util.WriteFile(revocationprivkeyfile, []byte(""), 0666)
+	err = util.WriteFileTODO(revocationprivkeyfile, []byte(""), 0666)
 	if err != nil {
 		t.Fatalf("Failed to write to file: %s", err.Error())
 	}
-	err = util.WriteFile(revocationpubkeyfile, []byte(""), 0666)
+	err = util.WriteFileTODO(revocationpubkeyfile, []byte(""), 0666)
 	if err != nil {
 		t.Fatalf("Failed to write to file: %s", err.Error())
 	}

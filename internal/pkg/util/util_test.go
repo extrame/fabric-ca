@@ -291,13 +291,13 @@ func TestWriteFile(t *testing.T) {
 	defer os.RemoveAll(testdir)
 
 	testData := []byte("foo")
-	err = WriteFile(filepath.Join(testdir, "test.txt"), testData, 0777)
+	err = WriteFileTODO(filepath.Join(testdir, "test.txt"), testData, 0777)
 	assert.NoError(t, err)
 
 	readOnlyDir := filepath.Join(testdir, "readonlydir")
 	err = os.MkdirAll(readOnlyDir, 4444)
 	assert.NoError(t, err, "failed to create read only directory")
-	err = WriteFile(filepath.Join(readOnlyDir, "test/test.txt"), testData, 0777)
+	err = WriteFileTODO(filepath.Join(readOnlyDir, "test/test.txt"), testData, 0777)
 	assert.Error(t, err, "Should fail to create 'test' directory as the parent directory is read only")
 }
 

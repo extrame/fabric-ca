@@ -14,7 +14,6 @@ limitations under the License.
 package command
 
 import (
-	"os"
 	"path"
 	"path/filepath"
 	"time"
@@ -131,15 +130,10 @@ func (c *ClientCmd) runGenCRL() error {
 
 // Store the CRL
 func storeCRL(config *lib.ClientConfig, crl []byte) error {
-	dirName := path.Join(config.MSPDir, crlsFolder)
-	if _, err := os.Stat(dirName); os.IsNotExist(err) {
-		mkdirErr := os.MkdirAll(dirName, os.ModeDir|0755)
-		if mkdirErr != nil {
-			return errors.Wrapf(mkdirErr, "Failed to create directory %s", dirName)
-		}
-	}
+	dirName := crlsFolder
 	fileName := path.Join(dirName, crlFile)
-	err := util.WriteFile(fileName, crl, 0644)
+	err := config.GetMSPProvider().WriteFile(fileName, crl, 0644)
+	// err := util.WriteFile(fileName, crl, 0644)
 	if err != nil {
 		return errors.Wrapf(err, "Failed to write CRL to the file %s", fileName)
 	}
