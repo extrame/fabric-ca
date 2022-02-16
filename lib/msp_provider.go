@@ -59,6 +59,7 @@ func (f *FileMSPProvider) MkdirAll(path string, mode os.FileMode) error {
 
 func (f *FileMSPProvider) GetFor(root string) MSPProvider {
 	if root == f.root || f.root == "" {
+		f.SetRoot(root)
 		return f
 	}
 	var nF FileMSPProvider
