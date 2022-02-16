@@ -113,7 +113,7 @@ func (c *ClientConfig) GenCSR(home string) error {
 		return err
 	}
 
-	csrFile := path.Join(client.Config.MSPDir, "signcerts", fmt.Sprintf("%s.csr", c.CSR.CN))
+	csrFile := path.Join("signcerts", fmt.Sprintf("%s.csr", c.CSR.CN))
 	err = c.GetMSPProvider().WriteFile(csrFile, csrPEM, 0644)
 	if err != nil {
 		return errors.WithMessage(err, "Failed to store the CSR")

@@ -11,7 +11,10 @@ import (
 
 type MSPProvider interface {
 	WriteFile(path string, bytes []byte, mode os.FileMode) error
+	ReadFile(string) ([]byte, error)
+	FileExists(path string) bool
 	SetRoot(dir string)
+	MkdirAll(path string, mode os.FileMode) error
 }
 
 type FileMSPProvider struct {
@@ -34,6 +37,23 @@ func (f *FileMSPProvider) WriteFile(file string, buf []byte, perm os.FileMode) e
 		}
 	}
 	return ioutil.WriteFile(file, buf, perm)
+}
+
+func (f *FileMSPProvider) FileExists(name string) bool {
+	if _, err := os.Stat(filepath.Join(f.root, name)); err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+	}
+	return true
+}
+
+func (f *FileMSPProvider) ReadFile(file string) ([]byte, error) {
+	return ioutil.ReadFile(filepath.Join(f.root, file))
+}
+
+func (f *FileMSPProvider) MkdirAll(path string, mode os.FileMode) error {
+	return os.MkdirAll(filepath.Join(f.root, path), mode)
 }
 
 func RegisterMSPProvider(name string, provider MSPProvider) {

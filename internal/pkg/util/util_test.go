@@ -281,7 +281,7 @@ func TestMarshal(t *testing.T) {
 
 // TODO(mjs): Get rid of this. It's literally a call to ioutil.ReadFile.
 func TestReadFile(t *testing.T) {
-	_, err := ReadFile(filepath.Join("testdata", "csr.json"))
+	_, err := ReadFileTODO(filepath.Join("testdata", "csr.json"))
 	assert.NoError(t, err, "failed to read file")
 }
 

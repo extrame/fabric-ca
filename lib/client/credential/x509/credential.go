@@ -30,6 +30,7 @@ type Client interface {
 	NewX509Identity(name string, creds []credential.Credential) Identity
 	GetCSP() bccsp.BCCSP
 	WriteFile(file string, buf []byte, perm os.FileMode) error
+	ReadFile(file string) ([]byte, error)
 }
 
 // Identity represents an identity
@@ -88,17 +89,21 @@ func (cred *Credential) SetVal(val interface{}) error {
 // loaded from the location specified by the keyFile attribute, if the
 // private key is not found in the keystore managed by BCCSP
 func (cred *Credential) Load() error {
-	cert, err := util.ReadFile(cred.certFile)
+	cert, err := cred.client.ReadFile(cred.certFile)
 	if err != nil {
 		log.Debugf("No certificate found at %s", cred.certFile)
 		return err
 	}
 	csp := cred.getCSP()
-	key, _, _, err := util.GetSignerFromCertFile(cred.certFile, csp)
+	key, _, _, err := util.GetSignerFromCertBytes(cert, csp)
 	if err != nil {
 		// Fallback: attempt to read out of keyFile and import
 		log.Debugf("No key found in the BCCSP keystore, attempting fallback")
-		key, err = util.ImportBCCSPKeyFromPEM(cred.keyFile, csp, true)
+		keyBuff, err := cred.client.ReadFile(cred.keyFile)
+		if err != nil {
+			return errors.WithMessage(err, fmt.Sprintf("Could not find the private key keyfile %s", cred.keyFile))
+		}
+		key, err = util.ImportBCCSPKeyFromPEMBytes(keyBuff, cred.keyFile, csp, true)
 		if err != nil {
 			return errors.WithMessage(err, fmt.Sprintf("Could not find the private key in the BCCSP keystore nor in the keyfile %s", cred.keyFile))
 		}

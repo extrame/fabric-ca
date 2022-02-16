@@ -174,9 +174,16 @@ func GetSignerFromCert(cert *x509.Certificate, csp bccsp.BCCSP) (bccsp.Key, cryp
 func GetSignerFromCertFile(certFile string, csp bccsp.BCCSP) (bccsp.Key, crypto.Signer, *x509.Certificate, error) {
 	// Load cert file
 	certBytes, err := ioutil.ReadFile(certFile)
+
 	if err != nil {
 		return nil, nil, nil, errors.Wrapf(err, "Could not read certFile '%s'", certFile)
 	}
+	return GetSignerFromCertBytes(certBytes, csp)
+}
+
+// GetSignerFromCertBytes load skiFile and load private key represented by ski and return bccsp signer that conforms to crypto.Signer
+func GetSignerFromCertBytes(certBytes []byte, csp bccsp.BCCSP) (bccsp.Key, crypto.Signer, *x509.Certificate, error) {
+
 	// Parse certificate
 	parsedCa, err := helpers.ParseCertificatePEM(certBytes)
 	if err != nil {
@@ -212,6 +219,11 @@ func ImportBCCSPKeyFromPEM(keyFile string, myCSP bccsp.BCCSP, temporary bool) (b
 	if err != nil {
 		return nil, err
 	}
+	return ImportBCCSPKeyFromPEMBytes(keyBuff, keyFile, myCSP, temporary)
+}
+
+// ImportBCCSPKeyFromPEM attempts to create a private BCCSP key from a pem file keyFile
+func ImportBCCSPKeyFromPEMBytes(keyBuff []byte, keyFile string, myCSP bccsp.BCCSP, temporary bool) (bccsp.Key, error) {
 	key, err := utils.PEMtoPrivateKey(keyBuff, nil)
 	if err != nil {
 		return nil, errors.WithMessage(err, fmt.Sprintf("Failed parsing private key from %s", keyFile))

@@ -21,7 +21,7 @@ func TestNewSignerError(t *testing.T) {
 }
 
 func TestNewSigner(t *testing.T) {
-	certBytes, err := util.ReadFile(filepath.Join(testDataDir, "ec256-1-cert.pem"))
+	certBytes, err := util.ReadFileTODO(filepath.Join(testDataDir, "ec256-1-cert.pem"))
 	if err != nil {
 		t.Fatalf("Failed to read the cert: %s", err.Error())
 	}

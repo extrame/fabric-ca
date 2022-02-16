@@ -77,7 +77,7 @@ func RandomString(n int) string {
 }
 
 // ReadFile reads a file
-func ReadFile(file string) ([]byte, error) {
+func ReadFileTODO(file string) ([]byte, error) {
 	return ioutil.ReadFile(file)
 }
 
@@ -396,7 +396,7 @@ func GetDefaultConfigFile(cmdName string) string {
 
 // GetX509CertificateFromPEMFile gets an X509 certificate from a file
 func GetX509CertificateFromPEMFile(file string) (*x509.Certificate, error) {
-	pemBytes, err := ReadFile(file)
+	pemBytes, err := ReadFileTODO(file)
 	if err != nil {
 		return nil, err
 	}

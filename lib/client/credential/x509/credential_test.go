@@ -87,7 +87,7 @@ func TestX509Credential(t *testing.T) {
 	assert.Error(t, err, "RevokeSelf should return an error as credential has not been loaded from disk or set")
 
 	// Set valid value
-	certBytes, err := util.ReadFile(filepath.Join(testDataDir, "ec256-1-cert.pem"))
+	certBytes, err := client.Config.GetMSPProvider().ReadFile(filepath.Join(testDataDir, "ec256-1-cert.pem"))
 	if err != nil {
 		t.Fatalf("Failed to read file: %s", err.Error())
 	}
@@ -189,7 +189,7 @@ func TestRevokeSelf(t *testing.T) {
 	client.On("GetCSP").Return(bccsp)
 	client.On("GetCSP").Return(nil)
 	certFile := filepath.Join(clientHome, "ec256-1-cert.pem")
-	cert, err := readCert(certFile)
+	cert, err := readCert(certFile, client)
 	if err != nil {
 		t.Fatalf("Failed to read the cert: %s", err.Error())
 	}
@@ -222,8 +222,8 @@ func TestRevokeSelf(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func readCert(certFile string) (*x509.Certificate, error) {
-	certBytes, err := util.ReadFile(certFile)
+func readCert(certFile string, c Client) (*x509.Certificate, error) {
+	certBytes, err := c.ReadFile(certFile)
 	if err != nil {
 		return nil, err
 	}

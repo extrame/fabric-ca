@@ -10,6 +10,7 @@ import (
 	"bytes"
 	"context"
 	"crypto"
+	"crypto/x509"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -19,13 +20,13 @@ import (
 	"net/url"
 	"os"
 	"path"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
 
 	cfsslapi "github.com/cloudflare/cfssl/api"
 	"github.com/cloudflare/cfssl/csr"
+	"github.com/cloudflare/cfssl/helpers"
 	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/internal/pkg/api"
 	"github.com/extrame/fabric-ca/internal/pkg/util"
@@ -106,35 +107,37 @@ func (c *Client) Init() error {
 			return err
 		}
 		cfg.MSPDir = mspDir
+		c.mspProvider = cfg.GetMSPProvider()
+
 		// Key directory and file
-		keyDir := path.Join(mspDir, "keystore")
-		err = os.MkdirAll(keyDir, 0700)
+		keyDir := "keystore"
+		err = c.mspProvider.MkdirAll(keyDir, 0700)
 		if err != nil {
 			return errors.Wrap(err, "Failed to create keystore directory")
 		}
 		c.keyFile = path.Join(keyDir, "key.pem")
 
 		// Cert directory and file
-		certDir := path.Join(mspDir, "signcerts")
-		err = os.MkdirAll(certDir, 0755)
+		certDir := "signcerts"
+		err = c.mspProvider.MkdirAll(certDir, 0755)
 		if err != nil {
 			return errors.Wrap(err, "Failed to create signcerts directory")
 		}
 		c.certFile = path.Join(certDir, "cert.pem")
 
 		// CA certs directory
-		c.caCertsDir = path.Join(mspDir, "cacerts")
-		err = os.MkdirAll(c.caCertsDir, 0755)
+		c.caCertsDir = "cacerts"
+		err = c.mspProvider.MkdirAll(c.caCertsDir, 0755)
 		if err != nil {
 			return errors.Wrap(err, "Failed to create cacerts directory")
 		}
 
 		// CA's Idemix public key
-		c.ipkFile = filepath.Join(mspDir, "IssuerPublicKey")
+		c.ipkFile = "IssuerPublicKey"
 
 		// Idemix credentials directory
-		c.idemixCredsDir = path.Join(mspDir, "user")
-		err = os.MkdirAll(c.idemixCredsDir, 0755)
+		c.idemixCredsDir = "user"
+		err = c.mspProvider.MkdirAll(c.idemixCredsDir, 0755)
 		if err != nil {
 			return errors.Wrap(err, "Failed to create Idemix credentials directory 'user'")
 		}
@@ -150,8 +153,6 @@ func (c *Client) Init() error {
 		if err != nil {
 			return err
 		}
-
-		c.mspProvider = c.Config.GetMSPProvider()
 
 		// Successfully initialized the client
 		c.initialized = true
@@ -939,21 +940,38 @@ func (c *Client) CheckEnrollment() error {
 }
 
 func (c *Client) checkX509Enrollment() error {
-	keyFileExists := util.FileExists(c.keyFile)
-	certFileExists := util.FileExists(c.certFile)
+	keyFileExists := c.mspProvider.FileExists(c.keyFile)
+	certFileExists := c.mspProvider.FileExists(c.certFile)
 	if keyFileExists && certFileExists {
 		return nil
 	}
 	// If key file does not exist, but certFile does, key file is probably
 	// stored by bccsp, so check to see if this is the case
 	if certFileExists {
-		_, _, _, err := util.GetSignerFromCertFile(c.certFile, c.csp)
+		_, _, _, err := c.GetSignerFromCertFile(c.certFile, c.csp)
 		if err == nil {
 			// Yes, the key is stored by BCCSP
 			return nil
 		}
 	}
 	return errors.New("X509 enrollment information does not exist")
+}
+
+// GetSignerFromCertFile load skiFile and load private key represented by ski and return bccsp signer that conforms to crypto.Signer
+func (c *Client) GetSignerFromCertFile(certFile string, csp bccsp.BCCSP) (bccsp.Key, crypto.Signer, *x509.Certificate, error) {
+	// Load cert file
+	certBytes, err := c.mspProvider.ReadFile(certFile)
+	if err != nil {
+		return nil, nil, nil, errors.Wrapf(err, "Could not read certFile '%s'", certFile)
+	}
+	// Parse certificate
+	parsedCa, err := helpers.ParseCertificatePEM(certBytes)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	// Get the signer from the cert
+	key, cspSigner, err := util.GetSignerFromCert(parsedCa, csp)
+	return key, cspSigner, parsedCa, err
 }
 
 // checkIdemixEnrollment returns an error if CA's Idemix public key and user's
@@ -979,7 +997,7 @@ func (c *Client) verifyIdemixCredential() error {
 	if err != nil {
 		return err
 	}
-	credfileBytes, err := util.ReadFile(c.idemixCredFile)
+	credfileBytes, err := c.mspProvider.ReadFile(c.idemixCredFile)
 	if err != nil {
 		return errors.Wrapf(err, "Failed to read %s", c.idemixCredFile)
 	}
@@ -1007,6 +1025,10 @@ func (c *Client) verifyIdemixCredential() error {
 // WriteFile writes a file
 func (f *Client) WriteFile(file string, buf []byte, perm os.FileMode) error {
 	return f.mspProvider.WriteFile(file, buf, perm)
+}
+
+func (f *Client) ReadFile(file string) ([]byte, error) {
+	return f.mspProvider.ReadFile(file)
 }
 
 func newCfsslKeyRequest(bkr *api.KeyRequest) *csr.KeyRequest {

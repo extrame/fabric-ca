@@ -1321,7 +1321,7 @@ func testThreeCAHierarchy(t *testing.T) {
 		assert.NoError(t, err, "failed to read %", rootCertDir)
 		file := files[0].Name()
 		rootCertPath := filepath.Join(rootCertDir, file)
-		rootcaCertBytes, err := util.ReadFile(rootCertPath)
+		rootcaCertBytes, err := util.ReadFileTODO(rootCertPath)
 		assert.NoError(t, err, "Failed to read root CA certificate file %s", rootCertPath)
 		rootcerts, err := util.GetX509CertificatesFromPEM(rootcaCertBytes)
 		assert.NoError(t, err, "Failed to retrieve root certificate from root CA certificate file")
@@ -1331,7 +1331,7 @@ func testThreeCAHierarchy(t *testing.T) {
 			rootCertPath, filepath.Base(rootCertDir))
 
 		interCertPath := filepath.Join(interCertsDir, file)
-		intcaCertBytes, err := util.ReadFile(interCertPath)
+		intcaCertBytes, err := util.ReadFileTODO(interCertPath)
 		assert.NoError(t, err, "Failed to read intermediate CA certificates file %s", interCertPath)
 		intcerts, err := util.GetX509CertificatesFromPEM(intcaCertBytes)
 		assert.NoError(t, err, "Failed to retrieve certs from intermediate CA certificates file")

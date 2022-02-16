@@ -389,11 +389,11 @@ func (ca *CA) getCAChain() (chain []byte, err error) {
 	certAuth := &ca.Config.CA
 	// If the chain file exists, we always return the chain from here
 	if util.FileExists(certAuth.Chainfile) {
-		return util.ReadFile(certAuth.Chainfile)
+		return util.ReadFileTODO(certAuth.Chainfile)
 	}
 	// Otherwise, if this is a root CA, we always return the contents of the CACertfile
 	if ca.Config.Intermediate.ParentServer.URL == "" {
-		return util.ReadFile(certAuth.Certfile)
+		return util.ReadFileTODO(certAuth.Certfile)
 	}
 	// If this is an intermediate CA but the ca.Chainfile doesn't exist,
 	// it is an error.  It should have been created during intermediate CA enrollment.
@@ -1179,7 +1179,7 @@ func validateMatchingKeys(cert *x509.Certificate, keyFile string) error {
 // Load CN from existing enrollment information
 func (ca *CA) loadCNFromEnrollmentInfo(certFile string) (string, error) {
 	log.Debug("Loading CN from existing enrollment information")
-	cert, err := util.ReadFile(certFile)
+	cert, err := util.ReadFileTODO(certFile)
 	if err != nil {
 		log.Debugf("No cert found at %s", certFile)
 		return "", err

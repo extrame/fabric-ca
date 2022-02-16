@@ -32,6 +32,7 @@ type Client interface {
 	GetIssuerPubKey() (*idemix.IssuerPublicKey, error)
 	GetCSP() bccsp.BCCSP
 	WriteFile(file string, buf []byte, perm os.FileMode) error
+	ReadFile(file string) (buf []byte, err error)
 }
 
 // Credential represents an Idemix credential. Implements Credential interface
@@ -101,7 +102,7 @@ func (cred *Credential) Store() error {
 // Load loads the Idemix credential from the location specified by the
 // signerConfigFile attribute
 func (cred *Credential) Load() error {
-	signerConfigBytes, err := util.ReadFile(cred.signerConfigFile)
+	signerConfigBytes, err := cred.client.ReadFile(cred.signerConfigFile)
 	if err != nil {
 		log.Debugf("No credential found at %s: %s", cred.signerConfigFile, err.Error())
 		return err

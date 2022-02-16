@@ -58,3 +58,7 @@ func (_m *Client) NewX509Identity(name string, creds []credential.Credential) x5
 func (_m *Client) WriteFile(name string, contents []byte, perm os.FileMode) error {
 	return util.WriteFileTODO(name, contents, perm)
 }
+
+func (_m *Client) ReadFile(name string) (contents []byte, err error) {
+	return util.ReadFileTODO(name)
+}
