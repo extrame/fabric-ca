@@ -52,10 +52,11 @@ func (c *ClientConfig) GetMSPProvider() MSPProvider {
 		c.MSPType = "file"
 	}
 	msp, ok := registeredMSPProvider[c.MSPType]
+	copy := msp.Copy()
 	if ok {
-		msp.SetRoot(c.MSPDir)
+		copy.SetRoot(c.MSPDir)
 	}
-	return msp
+	return copy
 }
 
 func (c *ClientConfig) GetCustomizedIP() string {

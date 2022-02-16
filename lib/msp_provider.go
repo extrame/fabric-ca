@@ -15,6 +15,7 @@ type MSPProvider interface {
 	FileExists(path string) bool
 	SetRoot(dir string)
 	MkdirAll(path string, mode os.FileMode) error
+	Copy() MSPProvider
 }
 
 type FileMSPProvider struct {
@@ -54,6 +55,11 @@ func (f *FileMSPProvider) ReadFile(file string) ([]byte, error) {
 
 func (f *FileMSPProvider) MkdirAll(path string, mode os.FileMode) error {
 	return os.MkdirAll(filepath.Join(f.root, path), mode)
+}
+
+func (f *FileMSPProvider) Copy() MSPProvider {
+	var nF FileMSPProvider
+	return &nF
 }
 
 func RegisterMSPProvider(name string, provider MSPProvider) {
