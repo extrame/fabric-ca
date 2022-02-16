@@ -15,7 +15,7 @@ type MSPProvider interface {
 	FileExists(path string) bool
 	SetRoot(dir string)
 	MkdirAll(path string, mode os.FileMode) error
-	Copy() MSPProvider
+	GetFor(root string) MSPProvider
 }
 
 type FileMSPProvider struct {
@@ -57,8 +57,12 @@ func (f *FileMSPProvider) MkdirAll(path string, mode os.FileMode) error {
 	return os.MkdirAll(filepath.Join(f.root, path), mode)
 }
 
-func (f *FileMSPProvider) Copy() MSPProvider {
+func (f *FileMSPProvider) GetFor(root string) MSPProvider {
+	if root == f.root || f.root == "" {
+		return f
+	}
 	var nF FileMSPProvider
+	nF.root = root
 	return &nF
 }
 
