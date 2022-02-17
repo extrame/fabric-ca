@@ -58,14 +58,14 @@ func TestInitBCCSP(t *testing.T) {
 	defer os.RemoveAll(mspDir)
 
 	var opts *factory.FactoryOpts
-	_, err = InitBCCSP(&opts, "", mspDir)
+	_, err = InitBCCSP(&opts, "", mspDir, false)
 	assert.NoError(t, err, "first initialization of BCCSP failed")
 
 	cfg := &factory.FactoryOpts{ProviderName: "SW"}
-	_, err = InitBCCSP(&cfg, "msp2", mspDir)
+	_, err = InitBCCSP(&cfg, "msp2", mspDir, false)
 	assert.NoError(t, err, "second initialization of BCCSP failed")
 
-	_, err = InitBCCSP(nil, "", mspDir)
+	_, err = InitBCCSP(nil, "", mspDir, false)
 	assert.Error(t, err, "third initialization  of BCCSP should have failed")
 }
 
@@ -176,4 +176,15 @@ func TestGetSignerFromCertInvalidArgs(t *testing.T) {
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "Failed to import certificate's public key:")
 	assert.Contains(t, err.Error(), "Certificate's public key type not recognized.")
+}
+
+func TestImportBCCSPKeyFromPEMBytes(t *testing.T) {
+	pem := `-----BEGIN PRIVATE KEY-----
+MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgXAtX+kwsdEFeSCdz
+0e2RUTN0h7qLBj93vwxmV5us3AGhRANCAASXWzDQ+jHjagktWCdybz54u+2tY2Lq
+WlNZ5sJDlSHsMfHntENaLoyY6sV8AoBxrPcaZBEGj8E1Qtccz++ePg9w
+-----END PRIVATE KEY-----
+`
+	key, err := ImportBCCSPKeyFromPEMBytes([]byte(pem), "", csp, false)
+	fmt.Println(key, err)
 }

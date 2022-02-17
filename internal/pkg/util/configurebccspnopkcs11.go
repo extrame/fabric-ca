@@ -1,3 +1,4 @@
+//go:build !pkcs11
 // +build !pkcs11
 
 /*
@@ -18,7 +19,7 @@ import (
 )
 
 // ConfigureBCCSP configures BCCSP, using
-func ConfigureBCCSP(optsPtr **factory.FactoryOpts, mspDir, homeDir string) error {
+func ConfigureBCCSP(optsPtr **factory.FactoryOpts, mspDir, homeDir string, usememory bool) error {
 	var err error
 	if optsPtr == nil {
 		return errors.New("nil argument not allowed")
@@ -40,14 +41,16 @@ func ConfigureBCCSP(optsPtr **factory.FactoryOpts, mspDir, homeDir string) error
 		if opts.SwOpts.SecLevel == 0 {
 			opts.SwOpts.SecLevel = 256
 		}
-		if opts.SwOpts.FileKeystore == nil {
-			opts.SwOpts.FileKeystore = &factory.FileKeystoreOpts{}
-		}
-		// The mspDir overrides the KeyStorePath; otherwise, if not set, set default
-		if mspDir != "" {
-			opts.SwOpts.FileKeystore.KeyStorePath = path.Join(mspDir, "keystore")
-		} else if opts.SwOpts.FileKeystore.KeyStorePath == "" {
-			opts.SwOpts.FileKeystore.KeyStorePath = path.Join("msp", "keystore")
+		if !usememory {
+			if opts.SwOpts.FileKeystore == nil {
+				opts.SwOpts.FileKeystore = &factory.FileKeystoreOpts{}
+			}
+			// The mspDir overrides the KeyStorePath; otherwise, if not set, set default
+			if mspDir != "" {
+				opts.SwOpts.FileKeystore.KeyStorePath = path.Join(mspDir, "keystore")
+			} else if opts.SwOpts.FileKeystore.KeyStorePath == "" {
+				opts.SwOpts.FileKeystore.KeyStorePath = path.Join("msp", "keystore")
+			}
 		}
 	}
 	err = makeFileNamesAbsolute(opts, homeDir)

@@ -144,7 +144,16 @@ func (c *Client) Init() error {
 		c.idemixCredFile = path.Join(c.idemixCredsDir, "SignerConfig")
 
 		// Initialize BCCSP (the crypto layer)
-		c.csp, err = util.InitBCCSP(&cfg.CSP, mspDir, c.HomeDir)
+		storer, ok := c.mspProvider.(SelfSkStore)
+		c.csp, err = util.InitBCCSP(&cfg.CSP, mspDir, c.HomeDir, ok)
+		if ok {
+			keys := storer.GetStoredKeys()
+			if keys != nil {
+				for k, v := range keys {
+					util.ImportBCCSPKeyFromPEMBytes(v, k, c.csp, false)
+				}
+			}
+		}
 		if err != nil {
 			return err
 		}
@@ -375,7 +384,12 @@ func (c *Client) handleX509Enroll(req *api.EnrollmentRequest) (*EnrollmentRespon
 	}
 
 	// Create the enrollment response
-	return c.newEnrollmentResponse(&result, req.Name, key)
+	resp, err := c.newEnrollmentResponse(&result, req.Name, key)
+	storer, ok := c.mspProvider.(SelfSkStore)
+	if err == nil && ok {
+		storer.StoreSk(key)
+	}
+	return resp, err
 }
 
 // Handles enrollment request for an Idemix credential

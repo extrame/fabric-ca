@@ -40,8 +40,8 @@ func GetDefaultBCCSP() bccsp.BCCSP {
 }
 
 // InitBCCSP initializes BCCSP
-func InitBCCSP(optsPtr **factory.FactoryOpts, mspDir, homeDir string) (bccsp.BCCSP, error) {
-	err := ConfigureBCCSP(optsPtr, mspDir, homeDir)
+func InitBCCSP(optsPtr **factory.FactoryOpts, mspDir, homeDir string, usememory bool) (bccsp.BCCSP, error) {
+	err := ConfigureBCCSP(optsPtr, mspDir, homeDir, usememory)
 	if err != nil {
 		return nil, err
 	}

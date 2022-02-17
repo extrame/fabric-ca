@@ -6,6 +6,8 @@ import (
 	"path"
 	"path/filepath"
 
+	"github.com/hyperledger/fabric/bccsp"
+
 	"github.com/pkg/errors"
 )
 
@@ -16,6 +18,11 @@ type MSPProvider interface {
 	SetRoot(dir string)
 	MkdirAll(path string, mode os.FileMode) error
 	GetFor(root string) MSPProvider
+}
+
+type SelfSkStore interface {
+	GetStoredKeys() map[string][]byte
+	StoreSk(bccsp.Key)
 }
 
 type FileMSPProvider struct {

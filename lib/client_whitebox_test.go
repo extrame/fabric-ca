@@ -263,7 +263,7 @@ func testImpersonation(id *Identity, t *testing.T) {
 		t.Fatalf("Failed to convert admin's cert: %s", err)
 	}
 	bc := &factory.FactoryOpts{}
-	csp, err := util.InitBCCSP(&bc, "", path.Join(testTLSClientAuthDir, "client"))
+	csp, err := util.InitBCCSP(&bc, "", path.Join(testTLSClientAuthDir, "client"), false)
 	if err != nil {
 		t.Fatalf("Failed to initialize BCCSP: %s", err)
 	}

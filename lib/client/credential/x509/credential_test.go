@@ -182,7 +182,7 @@ func TestRevokeSelf(t *testing.T) {
 			SecLevel:   256,
 		},
 	}
-	bccsp, err := util.InitBCCSP(&opts, "msp", clientHome)
+	bccsp, err := util.InitBCCSP(&opts, "msp", clientHome, false)
 	if err != nil {
 		t.Fatalf("Failed initialize BCCSP: %s", err.Error())
 	}
