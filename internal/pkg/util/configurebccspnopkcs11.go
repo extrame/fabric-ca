@@ -51,6 +51,8 @@ func ConfigureBCCSP(optsPtr **factory.FactoryOpts, mspDir, homeDir string, useme
 			} else if opts.SwOpts.FileKeystore.KeyStorePath == "" {
 				opts.SwOpts.FileKeystore.KeyStorePath = path.Join("msp", "keystore")
 			}
+		} else {
+			opts.SwOpts.FileKeystore = nil
 		}
 	}
 	err = makeFileNamesAbsolute(opts, homeDir)
