@@ -16,6 +16,7 @@ import (
 	"encoding/pem"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strings"
 	_ "time" // for ocspSignerFromConfig
 
@@ -255,11 +256,14 @@ func ImportBCCSPKeyFromPEMBytes(keyBuff []byte, keyFile string, myCSP bccsp.BCCS
 // This function originated from crypto/tls/tls.go and was adapted to use a
 // BCCSP Signer
 func LoadX509KeyPair(certFile, keyFile string, csp bccsp.BCCSP) (*tls.Certificate, error) {
-
 	certPEMBlock, err := ioutil.ReadFile(certFile)
 	if err != nil {
 		return nil, err
 	}
+	return LoadX509KeyPairBytes(certPEMBlock, certFile, keyFile, csp)
+}
+
+func LoadX509KeyPairBytes(certPEMBlock []byte, certFile, keyFile string, csp bccsp.BCCSP) (*tls.Certificate, error) {
 
 	cert := &tls.Certificate{}
 	var skippedBlockTypes []string
@@ -296,7 +300,11 @@ func LoadX509KeyPair(certFile, keyFile string, csp bccsp.BCCSP) (*tls.Certificat
 		if keyFile != "" {
 			log.Debugf("Could not load TLS certificate with BCCSP: %s", err)
 			log.Debugf("Attempting fallback with certfile %s and keyfile %s", certFile, keyFile)
-			fallbackCerts, err := tls.LoadX509KeyPair(certFile, keyFile)
+			keyPEMBlock, err := os.ReadFile(keyFile)
+			var fallbackCerts tls.Certificate
+			if err == nil {
+				fallbackCerts, err = tls.X509KeyPair(certPEMBlock, keyPEMBlock)
+			}
 			if err != nil {
 				return nil, errors.Wrapf(err, "Could not get the private key %s that matches %s", keyFile, certFile)
 			}

@@ -68,7 +68,7 @@ func (m *Mysql) Connect() error {
 	connStr := re.ReplaceAllString(datasource, "/")
 
 	if clientTLSConfig.Enabled {
-		tlsConfig, err := tls.GetClientTLSConfig(clientTLSConfig, m.CSP)
+		tlsConfig, err := tls.GetClientTLSConfig(&tls.DefaultRW, clientTLSConfig, m.CSP)
 		if err != nil {
 			return errors.WithMessage(err, "Failed to get client TLS for MySQL")
 		}

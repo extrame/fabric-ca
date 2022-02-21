@@ -51,7 +51,7 @@ func TestGetClientTLSConfig(t *testing.T) {
 		t.Errorf("Failed to get absolute path for client TLS config: %s", err)
 	}
 
-	_, err = GetClientTLSConfig(cfg, nil)
+	_, err = GetClientTLSConfig(&DefaultRW, cfg, nil)
 	if err != nil {
 		t.Errorf("Failed to get TLS Config: %s", err)
 	}
@@ -67,7 +67,7 @@ func TestGetClientTLSConfigInvalidArgs(t *testing.T) {
 			CertFile: "no_tls_client-cert.pem",
 		},
 	}
-	_, err := GetClientTLSConfig(cfg, nil)
+	_, err := GetClientTLSConfig(&DefaultRW, cfg, nil)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "open no_tls_client-cert.pem: no such file or directory")
 
@@ -80,7 +80,7 @@ func TestGetClientTLSConfigInvalidArgs(t *testing.T) {
 		},
 	}
 	AbsTLSClient(cfg, configDir)
-	_, err = GetClientTLSConfig(cfg, nil)
+	_, err = GetClientTLSConfig(&DefaultRW, cfg, nil)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "No trusted root certificates for TLS were provided")
 
@@ -93,7 +93,7 @@ func TestGetClientTLSConfigInvalidArgs(t *testing.T) {
 		},
 	}
 	AbsTLSClient(cfg, configDir)
-	_, err = GetClientTLSConfig(cfg, nil)
+	_, err = GetClientTLSConfig(&DefaultRW, cfg, nil)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "no-tls_client-key.pem: no such file or directory")
 
@@ -105,7 +105,7 @@ func TestGetClientTLSConfigInvalidArgs(t *testing.T) {
 			CertFile: "",
 		},
 	}
-	_, err = GetClientTLSConfig(cfg, nil)
+	_, err = GetClientTLSConfig(&DefaultRW, cfg, nil)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "No trusted root certificates for TLS were provided")
 
@@ -118,7 +118,7 @@ func TestGetClientTLSConfigInvalidArgs(t *testing.T) {
 		},
 	}
 	AbsTLSClient(cfg, configDir)
-	_, err = GetClientTLSConfig(cfg, nil)
+	_, err = GetClientTLSConfig(&DefaultRW, cfg, nil)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "no-root.pem: no such file or directory")
 }
@@ -139,7 +139,7 @@ func TestAbsServerTLSConfig(t *testing.T) {
 }
 
 func TestCheckCertDates(t *testing.T) {
-	err := checkCertDates(expiredCert)
+	err := checkCertDates(&DefaultRW, expiredCert)
 	if err == nil {
 		assert.Error(t, errors.New("Expired certificate should have resulted in an error"))
 	}
@@ -149,7 +149,7 @@ func TestCheckCertDates(t *testing.T) {
 		assert.Error(t, err)
 	}
 
-	err = checkCertDates("notbefore.pem")
+	err = checkCertDates(&DefaultRW, "notbefore.pem")
 	if err == nil {
 		assert.Error(t, errors.New("Future valid certificate should have resulted in an error"))
 	}

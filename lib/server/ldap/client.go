@@ -19,6 +19,7 @@ import (
 	"github.com/extrame/fabric-ca/internal/pkg/util"
 	causer "github.com/extrame/fabric-ca/lib/server/user"
 	"github.com/extrame/fabric-ca/lib/spi"
+	"github.com/extrame/fabric-ca/lib/tls"
 	ctls "github.com/extrame/fabric-ca/lib/tls"
 	"github.com/hyperledger/fabric/bccsp"
 	"github.com/jmoiron/sqlx"
@@ -303,7 +304,7 @@ func (lc *Client) newConnection() (conn *ldap.Conn, err error) {
 		}
 	} else {
 		log.Debug("Connecting to LDAP server over TLS")
-		tlsConfig, err2 := ctls.GetClientTLSConfig(lc.TLS, lc.CSP)
+		tlsConfig, err2 := ctls.GetClientTLSConfig(&tls.DefaultRW, lc.TLS, lc.CSP)
 		if err2 != nil {
 			return nil, errors.WithMessage(err2, "Failed to get client TLS config")
 		}

@@ -192,7 +192,7 @@ func (c *Client) initHTTPClient() error {
 			return err
 		}
 
-		tlsConfig, err2 := tls.GetClientTLSConfig(&c.Config.TLS, c.csp)
+		tlsConfig, err2 := tls.GetClientTLSConfig(c, &c.Config.TLS, c.csp)
 		if err2 != nil {
 			return fmt.Errorf("Failed to get client TLS config: %s", err2)
 		}

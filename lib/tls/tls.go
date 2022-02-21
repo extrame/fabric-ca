@@ -67,7 +67,7 @@ type KeyCertFiles struct {
 }
 
 // GetClientTLSConfig creates a tls.Config object from certs and roots
-func GetClientTLSConfig(cfg *ClientTLSConfig, csp bccsp.BCCSP) (*tls.Config, error) {
+func GetClientTLSConfig(rw ReadWriter, cfg *ClientTLSConfig, csp bccsp.BCCSP) (*tls.Config, error) {
 	var certs []tls.Certificate
 
 	if csp == nil {
@@ -79,12 +79,16 @@ func GetClientTLSConfig(cfg *ClientTLSConfig, csp bccsp.BCCSP) (*tls.Config, err
 	log.Debugf("Client Key File: %s\n", cfg.Client.KeyFile)
 
 	if cfg.Client.CertFile != "" {
-		err := checkCertDates(cfg.Client.CertFile)
+		err := checkCertDates(rw, cfg.Client.CertFile)
 		if err != nil {
 			return nil, err
 		}
-
-		clientCert, err := util.LoadX509KeyPair(cfg.Client.CertFile, cfg.Client.KeyFile, csp)
+		var certPemBlock []byte
+		certPemBlock, err = rw.ReadFile(cfg.Client.CertFile)
+		if err != nil {
+			return nil, err
+		}
+		clientCert, err := util.LoadX509KeyPairBytes(certPemBlock, cfg.Client.CertFile, cfg.Client.KeyFile, csp)
 		if err != nil {
 			return nil, err
 		}
@@ -167,9 +171,9 @@ func AbsTLSServer(cfg *ServerTLSConfig, configDir string) error {
 	return nil
 }
 
-func checkCertDates(certFile string) error {
+func checkCertDates(rw ReadWriter, certFile string) error {
 	log.Debug("Check client TLS certificate for valid dates")
-	certPEM, err := ioutil.ReadFile(certFile)
+	certPEM, err := rw.ReadFile(certFile)
 	if err != nil {
 		return errors.Wrapf(err, "Failed to read file '%s'", certFile)
 	}
