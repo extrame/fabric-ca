@@ -20,7 +20,6 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
-	"io/ioutil"
 	"strings"
 	"time"
 
@@ -264,7 +263,7 @@ func GetServerTLSConfig(rw ReadWriter, cfg *ServerTLSConfig, csp bccsp.BCCSP) (t
 
 	var certPool *x509.CertPool
 	if authType != defaultClientAuth {
-		certPool, err = LoadPEMCertPool(cfg.ClientAuth.CertFiles)
+		certPool, err = LoadPEMCertPool(rw, cfg.ClientAuth.CertFiles)
 		if err != nil {
 			return nil, err
 		}
@@ -282,13 +281,13 @@ func GetServerTLSConfig(rw ReadWriter, cfg *ServerTLSConfig, csp bccsp.BCCSP) (t
 }
 
 // LoadPEMCertPool loads a pool of PEM certificates from list of files
-func LoadPEMCertPool(certFiles []string) (*x509.CertPool, error) {
+func LoadPEMCertPool(rw ReadWriter, certFiles []string) (*x509.CertPool, error) {
 	certPool := x509.NewCertPool()
 
 	if len(certFiles) > 0 {
 		for _, cert := range certFiles {
 			log.Debugf("Reading cert file: %s", cert)
-			pemCerts, err := ioutil.ReadFile(cert)
+			pemCerts, err := rw.ReadFile(cert)
 			if err != nil {
 				return nil, err
 			}
