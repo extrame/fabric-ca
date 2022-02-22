@@ -117,7 +117,7 @@ func GetClientTLSConfig(rw ReadWriter, cfg *ClientTLSConfig, csp bccsp.BCCSP) (*
 	}
 
 	for _, cacert := range cfg.CertFiles {
-		caCert, err := ioutil.ReadFile(cacert)
+		caCert, err := rw.ReadFile(cacert)
 		if err != nil {
 			return nil, errors.Wrapf(err, "Failed to read '%s'", cacert)
 		}
@@ -229,7 +229,7 @@ func GetServerTLSConfig(rw ReadWriter, cfg *ServerTLSConfig, csp bccsp.BCCSP) (t
 			return nil, fmt.Errorf("File specified by 'tls.certfile' does not exist: %s", cfg.CertFile)
 		}
 		log.Debugf("TLS Certificate: %s, TLS Key: %s", cfg.CertFile, cfg.KeyFile)
-	} else if !util.FileExists(cfg.CertFile) {
+	} else if !rw.FileExists(cfg.CertFile) {
 		// TLS key file is not specified, generate TLS key and cert if they are not already generated
 		if gw, ok := rw.(AutoGenerator); ok {
 			err = gw.AutoGenerateTLSCertificateKey()

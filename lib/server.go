@@ -496,7 +496,6 @@ func (s *Server) closeDB() error {
 // createDefaultCAConfigs creates specified number of default CA configuration files
 func (s *Server) createDefaultCAConfigs(cacount int) error {
 	log.Debugf("Creating %d default CA configuration files", cacount)
-
 	cashome, err := util.MakeFileAbs("ca", s.HomeDir)
 	if err != nil {
 		return err
@@ -623,9 +622,11 @@ func (s *Server) listenAndServe() (err error) {
 		log.Debug("TLS is enabled")
 		addrStr = fmt.Sprintf("https://%s", addr)
 
-		config, err := stls.GetServerTLSConfig(s, &c.TLS, s.csp)
-
-		listener, err = tls.Listen("tcp", addr, config)
+		var config *tls.Config
+		config, err = stls.GetServerTLSConfig(s, &c.TLS, s.csp)
+		if err == nil {
+			listener, err = tls.Listen("tcp", addr, config)
+		}
 		if err != nil {
 			return errors.Wrapf(err, "TLS listen failed for %s", addrStr)
 		}
