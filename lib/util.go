@@ -7,7 +7,6 @@ SPDX-License-Identifier: Apache-2.0
 package lib
 
 import (
-	"crypto/tls"
 	"crypto/x509"
 	"encoding/json"
 	"encoding/pem"
@@ -25,14 +24,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-var clientAuthTypes = map[string]tls.ClientAuthType{
-	"noclientcert":               tls.NoClientCert,
-	"requestclientcert":          tls.RequestClientCert,
-	"requireanyclientcert":       tls.RequireAnyClientCert,
-	"verifyclientcertifgiven":    tls.VerifyClientCertIfGiven,
-	"requireandverifyclientcert": tls.RequireAndVerifyClientCert,
-}
-
 // BytesToX509Cert converts bytes (PEM or DER) to an X509 certificate
 func BytesToX509Cert(bytes []byte) (*x509.Certificate, error) {
 	dcert, _ := pem.Decode(bytes)
@@ -44,28 +35,6 @@ func BytesToX509Cert(bytes []byte) (*x509.Certificate, error) {
 		return nil, errors.Wrap(err, "Buffer was neither PEM nor DER encoding")
 	}
 	return cert, err
-}
-
-// LoadPEMCertPool loads a pool of PEM certificates from list of files
-func LoadPEMCertPool(certFiles []string) (*x509.CertPool, error) {
-	certPool := x509.NewCertPool()
-
-	if len(certFiles) > 0 {
-		for _, cert := range certFiles {
-			log.Debugf("Reading cert file: %s", cert)
-			pemCerts, err := ioutil.ReadFile(cert)
-			if err != nil {
-				return nil, err
-			}
-
-			log.Debugf("Appending cert %s to pool", cert)
-			if !certPool.AppendCertsFromPEM(pemCerts) {
-				return nil, errors.New("Failed to load cert pool")
-			}
-		}
-	}
-
-	return certPool, nil
 }
 
 // UnmarshalConfig unmarshals a configuration file

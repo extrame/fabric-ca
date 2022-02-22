@@ -19,7 +19,9 @@ package tls
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"fmt"
 	"io/ioutil"
+	"strings"
 	"time"
 
 	"github.com/cloudflare/cfssl/log"
@@ -28,6 +30,18 @@ import (
 	"github.com/hyperledger/fabric/bccsp/factory"
 	"github.com/pkg/errors"
 )
+
+const (
+	defaultClientAuth = "noclientcert"
+)
+
+var clientAuthTypes = map[string]tls.ClientAuthType{
+	"noclientcert":               tls.NoClientCert,
+	"requestclientcert":          tls.RequestClientCert,
+	"requireanyclientcert":       tls.RequireAnyClientCert,
+	"verifyclientcertifgiven":    tls.VerifyClientCertIfGiven,
+	"requireandverifyclientcert": tls.RequireAndVerifyClientCert,
+}
 
 // DefaultCipherSuites is a set of strong TLS cipher suites
 var DefaultCipherSuites = []uint16{
@@ -196,4 +210,95 @@ func checkCertDates(rw ReadWriter, certFile string) error {
 	}
 
 	return nil
+}
+
+func GetServerTLSConfig(rw ReadWriter, cfg *ServerTLSConfig, csp bccsp.BCCSP) (tlsConfig *tls.Config, err error) {
+	var certPemBlock []byte
+	var clientAuth tls.ClientAuthType
+	var ok bool
+
+	// If key file is specified and it does not exist or its corresponding certificate file does not exist
+	// then need to return error and not start the server. The TLS key file is specified when the user
+	// wants the server to use custom tls key and cert and don't want server to auto generate its own. So,
+	// when the key file is specified, it must exist on the file system
+	if cfg.KeyFile != "" {
+		if !rw.FileExists(cfg.KeyFile) {
+			return nil, fmt.Errorf("File specified by 'tls.keyfile' does not exist: %s", cfg.KeyFile)
+		}
+		if !rw.FileExists(cfg.CertFile) {
+			return nil, fmt.Errorf("File specified by 'tls.certfile' does not exist: %s", cfg.CertFile)
+		}
+		log.Debugf("TLS Certificate: %s, TLS Key: %s", cfg.CertFile, cfg.KeyFile)
+	} else if !util.FileExists(cfg.CertFile) {
+		// TLS key file is not specified, generate TLS key and cert if they are not already generated
+		if gw, ok := rw.(AutoGenerator); ok {
+			err = gw.AutoGenerateTLSCertificateKey()
+		} else {
+			err = errors.New("not a AutoGenerator")
+		}
+		if err != nil {
+			return nil, fmt.Errorf("Failed to automatically generate TLS certificate and key: %s", err)
+		}
+	}
+
+	certPemBlock, err = rw.ReadFile(cfg.CertFile)
+	if err != nil {
+		return
+	}
+	var cer *tls.Certificate
+	cer, err = util.LoadX509KeyPairBytes(certPemBlock, cfg.CertFile, cfg.KeyFile, csp)
+	if err != nil {
+		return
+	}
+
+	if cfg.ClientAuth.Type == "" {
+		cfg.ClientAuth.Type = defaultClientAuth
+	}
+
+	log.Debugf("Client authentication type requested: %s", cfg.ClientAuth.Type)
+
+	authType := strings.ToLower(cfg.ClientAuth.Type)
+	if clientAuth, ok = clientAuthTypes[authType]; !ok {
+		return nil, errors.New("Invalid client auth type provided")
+	}
+
+	var certPool *x509.CertPool
+	if authType != defaultClientAuth {
+		certPool, err = LoadPEMCertPool(cfg.ClientAuth.CertFiles)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	tlsConfig = &tls.Config{
+		Certificates: []tls.Certificate{*cer},
+		ClientAuth:   clientAuth,
+		ClientCAs:    certPool,
+		MinVersion:   tls.VersionTLS12,
+		MaxVersion:   tls.VersionTLS13,
+		CipherSuites: DefaultCipherSuites,
+	}
+	return
+}
+
+// LoadPEMCertPool loads a pool of PEM certificates from list of files
+func LoadPEMCertPool(certFiles []string) (*x509.CertPool, error) {
+	certPool := x509.NewCertPool()
+
+	if len(certFiles) > 0 {
+		for _, cert := range certFiles {
+			log.Debugf("Reading cert file: %s", cert)
+			pemCerts, err := ioutil.ReadFile(cert)
+			if err != nil {
+				return nil, err
+			}
+
+			log.Debugf("Appending cert %s to pool", cert)
+			if !certPool.AppendCertsFromPEM(pemCerts) {
+				return nil, errors.New("Failed to load cert pool")
+			}
+		}
+	}
+
+	return certPool, nil
 }

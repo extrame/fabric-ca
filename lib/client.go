@@ -148,9 +148,10 @@ func (c *Client) Init() error {
 		c.csp, err = util.InitBCCSP(&cfg.CSP, mspDir, c.HomeDir, ok)
 		if ok {
 			keys := storer.GetStoredKeys()
-			if keys != nil {
-				for k, v := range keys {
-					util.ImportBCCSPKeyFromPEMBytes(v, k, c.csp, false)
+			for k, v := range keys {
+				_, err = util.ImportBCCSPKeyFromPEMBytes(v, k, c.csp, false)
+				if err != nil {
+					return err
 				}
 			}
 		}
@@ -1042,7 +1043,17 @@ func (f *Client) WriteFile(file string, buf []byte, perm os.FileMode) error {
 }
 
 func (f *Client) ReadFile(file string) ([]byte, error) {
-	return f.mspProvider.ReadFile(file)
+	bts, err := f.mspProvider.ReadFile(file)
+	if err != nil {
+		log.Info("try to read file out of msp: ", file)
+		return ioutil.ReadFile(file)
+	} else {
+		return bts, nil
+	}
+}
+
+func (f *Client) FileExists(file string) bool {
+	return f.mspProvider.FileExists(file)
 }
 
 func newCfsslKeyRequest(bkr *api.KeyRequest) *csr.KeyRequest {

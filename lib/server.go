@@ -9,7 +9,6 @@ package lib
 import (
 	"context"
 	"crypto/tls"
-	"crypto/x509"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -47,7 +46,7 @@ import (
 )
 
 const (
-	defaultClientAuth         = "noclientcert"
+	// defaultClientAuth         = "noclientcert"
 	fabricCAServerProfilePort = "FABRIC_CA_SERVER_PROFILE_PORT"
 	allRoles                  = "peer,orderer,client,user"
 	apiPathPrefix             = "/api/v1/"
@@ -607,8 +606,6 @@ func (s *Server) recordMetrics(duration time.Duration, caName, apiName, statusCo
 func (s *Server) listenAndServe() (err error) {
 
 	var listener net.Listener
-	var clientAuth tls.ClientAuthType
-	var ok bool
 
 	c := s.Config
 
@@ -626,58 +623,7 @@ func (s *Server) listenAndServe() (err error) {
 		log.Debug("TLS is enabled")
 		addrStr = fmt.Sprintf("https://%s", addr)
 
-		// If key file is specified and it does not exist or its corresponding certificate file does not exist
-		// then need to return error and not start the server. The TLS key file is specified when the user
-		// wants the server to use custom tls key and cert and don't want server to auto generate its own. So,
-		// when the key file is specified, it must exist on the file system
-		if c.TLS.KeyFile != "" {
-			if !util.FileExists(c.TLS.KeyFile) {
-				return fmt.Errorf("File specified by 'tls.keyfile' does not exist: %s", c.TLS.KeyFile)
-			}
-			if !util.FileExists(c.TLS.CertFile) {
-				return fmt.Errorf("File specified by 'tls.certfile' does not exist: %s", c.TLS.CertFile)
-			}
-			log.Debugf("TLS Certificate: %s, TLS Key: %s", c.TLS.CertFile, c.TLS.KeyFile)
-		} else if !util.FileExists(c.TLS.CertFile) {
-			// TLS key file is not specified, generate TLS key and cert if they are not already generated
-			err = s.autoGenerateTLSCertificateKey()
-			if err != nil {
-				return fmt.Errorf("Failed to automatically generate TLS certificate and key: %s", err)
-			}
-		}
-
-		cer, err := util.LoadX509KeyPair(c.TLS.CertFile, c.TLS.KeyFile, s.csp)
-		if err != nil {
-			return err
-		}
-
-		if c.TLS.ClientAuth.Type == "" {
-			c.TLS.ClientAuth.Type = defaultClientAuth
-		}
-
-		log.Debugf("Client authentication type requested: %s", c.TLS.ClientAuth.Type)
-
-		authType := strings.ToLower(c.TLS.ClientAuth.Type)
-		if clientAuth, ok = clientAuthTypes[authType]; !ok {
-			return errors.New("Invalid client auth type provided")
-		}
-
-		var certPool *x509.CertPool
-		if authType != defaultClientAuth {
-			certPool, err = LoadPEMCertPool(c.TLS.ClientAuth.CertFiles)
-			if err != nil {
-				return err
-			}
-		}
-
-		config := &tls.Config{
-			Certificates: []tls.Certificate{*cer},
-			ClientAuth:   clientAuth,
-			ClientCAs:    certPool,
-			MinVersion:   tls.VersionTLS12,
-			MaxVersion:   tls.VersionTLS13,
-			CipherSuites: stls.DefaultCipherSuites,
-		}
+		config, err := stls.GetServerTLSConfig(s, &c.TLS, s.csp)
 
 		listener, err = tls.Listen("tcp", addr, config)
 		if err != nil {
@@ -854,7 +800,7 @@ func (s *Server) loadDNFromCertFile(certFile string) (*DN, error) {
 	return distinguishedName, nil
 }
 
-func (s *Server) autoGenerateTLSCertificateKey() error {
+func (s *Server) AutoGenerateTLSCertificateKey() error {
 	log.Debug("TLS enabled but either certificate or key file does not exist, automatically generating TLS credentials")
 
 	clientCfg := &ClientConfig{
@@ -918,4 +864,29 @@ func (dn *DN) equal(checkDN *DN) error {
 		}
 	}
 	return nil
+}
+
+// WriteFile writes a file
+func (f *Server) WriteFile(file string, buf []byte, perm os.FileMode) error {
+	if f.Config.Client != nil {
+		provider := f.Config.Client.GetMSPProvider()
+		return provider.WriteFile(file, buf, perm)
+	}
+	return util.WriteFileTODO(file, buf, perm)
+}
+
+func (f *Server) ReadFile(file string) ([]byte, error) {
+	if f.Config.Client != nil {
+		provider := f.Config.Client.GetMSPProvider()
+		return provider.ReadFile(file)
+	}
+	return ioutil.ReadFile(file)
+}
+
+func (f *Server) FileExists(file string) bool {
+	if f.Config.Client != nil {
+		provider := f.Config.Client.GetMSPProvider()
+		return provider.FileExists(file)
+	}
+	return util.FileExists(file)
 }
