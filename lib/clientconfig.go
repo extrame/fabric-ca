@@ -173,3 +173,32 @@ func (c *ClientConfig) Register(home string) (rr *RegistrationResponse, err erro
 
 	return resp, nil
 }
+
+type ModifyIdentityRequest struct {
+	api.ModifyIdentityRequest
+}
+
+func (c *ClientConfig) ModifyIdentity(home string, request *ModifyIdentityRequest) error {
+
+	client := &Client{HomeDir: home, Config: c}
+	client.HomeDir = home
+
+	req := &api.ModifyIdentityRequest{}
+
+	id, err := client.LoadMyIdentity()
+	if err != nil {
+		return err
+	}
+
+	req = &request.ModifyIdentityRequest
+	req.Attributes = c.ID.Attributes
+
+	req.CAName = c.CAName
+	resp, err := id.ModifyIdentity(req)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Successfully modified identity - Name: %s, Type: %s, Affiliation: %s, Max Enrollments: %d, Secret: %s, Attributes: %+v\n", resp.ID, resp.Type, resp.Affiliation, resp.MaxEnrollments, resp.Secret, resp.Attributes)
+	return nil
+}
