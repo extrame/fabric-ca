@@ -682,7 +682,12 @@ func TestSRVRunningTLSServer(t *testing.T) {
 
 	rawURL := fmt.Sprintf("https://admin:adminpw@localhost:%d", rootPort)
 
-	_, err = clientConfig.Enroll(rawURL, testdataDir)
+	req := clientConfig.NewEnrollment()
+
+	clientConfig.URL, err = req.FromUrlStr(rawURL)
+	if err == nil {
+		_, err = clientConfig.Enroll(req, testdataDir)
+	}
 	if err != nil {
 		t.Errorf("Failed to enroll over TLS: %s", err)
 	}
@@ -1802,7 +1807,12 @@ func testNoClientCert(t *testing.T) {
 
 	rawURL := fmt.Sprintf("https://admin:adminpw@localhost:%d", rootPort)
 
-	_, err = clientConfig.Enroll(rawURL, testdataDir)
+	req := clientConfig.NewEnrollment()
+
+	clientConfig.URL, err = req.FromUrlStr(rawURL)
+	if err == nil {
+		_, err = clientConfig.Enroll(req, testdataDir)
+	}
 	if err != nil {
 		t.Errorf("Failed to enroll over TLS with no client authentication required: %s", err)
 	}
@@ -1864,9 +1874,13 @@ func testClientAuth(t *testing.T) {
 	}
 
 	rawURL := fmt.Sprintf("https://admin:adminpw@localhost:%d", rootPort)
+	req := clientConfig.NewEnrollment()
 
 	// Enrolling without any client certificate and key information set
-	_, err = clientConfig.Enroll(rawURL, testdataDir)
+	clientConfig.URL, err = req.FromUrlStr(rawURL)
+	if err == nil {
+		_, err = clientConfig.Enroll(req, testdataDir)
+	}
 	if err == nil {
 		t.Errorf("Client Auth Type: RequireAndVerifyClientCert, should have failed as no client cert was provided")
 	}
@@ -1882,8 +1896,12 @@ func testClientAuth(t *testing.T) {
 			},
 		},
 	}
+	req = clientConfig.NewEnrollment()
 
-	_, err = clientConfig.Enroll(rawURL, testdataDir)
+	clientConfig.URL, err = req.FromUrlStr(rawURL)
+	if err == nil {
+		_, err = clientConfig.Enroll(req, testdataDir)
+	}
 	if err != nil {
 		t.Errorf("Client Auth Type: RequireAndVerifyClientCert, failed to enroll over TLS with client certificate provided")
 	}

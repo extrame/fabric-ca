@@ -7,6 +7,7 @@ SPDX-License-Identifier: Apache-2.0
 package api
 
 import (
+	"net/url"
 	"time"
 
 	"github.com/cloudflare/cfssl/csr"
@@ -70,6 +71,27 @@ type EnrollmentRequest struct {
 
 func (er EnrollmentRequest) String() string {
 	return util.StructToString(&er)
+}
+
+//parse user and secret from url and return the other part in url
+func (e *EnrollmentRequest) FromUrlStr(rawURL string) (string, error) {
+	purl, err := url.Parse(rawURL)
+	if err == nil {
+		purl = e.FromUrl(purl)
+		return purl.String(), err
+	}
+	return rawURL, err
+}
+
+func (e *EnrollmentRequest) FromUrl(purl *url.URL) *url.URL {
+	if purl.User != nil {
+		name := purl.User.Username()
+		secret, _ := purl.User.Password()
+		e.Name = name
+		e.Secret = secret
+		purl.User = nil
+	}
+	return purl
 }
 
 // ReenrollmentRequest is a request to reenroll an identity.

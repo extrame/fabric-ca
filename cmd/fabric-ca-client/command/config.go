@@ -272,6 +272,9 @@ func (c *ClientCmd) ConfigInit() error {
 		return err
 	}
 
+	purl = c.clientCfg.Enrollment.FromUrl(purl)
+
+	c.clientCfg.URL = purl.String()
 	c.clientCfg.TLS.Enabled = purl.Scheme == "https"
 
 	err = processAttributes(c.cfgAttrs, c.clientCfg)

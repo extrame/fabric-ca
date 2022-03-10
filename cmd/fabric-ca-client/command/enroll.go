@@ -59,7 +59,9 @@ func (c *enrollCmd) runEnroll(cmd *cobra.Command, args []string) error {
 	cfg := c.GetClientCfg()
 	var resp *lib.EnrollmentResponse
 	var err error
-	resp, err = cfg.Enroll(cfg.URL, filepath.Dir(cfgFileName))
+
+	req := cfg.NewEnrollment()
+	resp, err = cfg.Enroll(req, filepath.Dir(cfgFileName))
 	if err != nil {
 		return err
 	}

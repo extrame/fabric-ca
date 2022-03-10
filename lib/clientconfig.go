@@ -18,7 +18,6 @@ package lib
 
 import (
 	"fmt"
-	"net/url"
 	"path"
 	"strings"
 
@@ -65,34 +64,26 @@ func (c *ClientConfig) GetCustomizedIP() string {
 // Enroll a client given the server's URL and the client's home directory.
 // The URL may be of the form: http://user:pass@host:port where user and pass
 // are the enrollment ID and secret, respectively.
-func (c *ClientConfig) Enroll(rawurl, home string) (*EnrollmentResponse, error) {
-	purl, err := url.Parse(rawurl)
-	if err != nil {
-		return nil, err
-	}
-	if purl.User != nil {
-		name := purl.User.Username()
-		secret, _ := purl.User.Password()
-		c.Enrollment.Name = name
-		c.Enrollment.Secret = secret
-		purl.User = nil
-	}
-	if c.Enrollment.Name == "" {
-		expecting := fmt.Sprintf(
-			"%s://<enrollmentID>:<secret>@%s",
-			purl.Scheme, purl.Host)
+func (c *ClientConfig) Enroll(req *api.EnrollmentRequest, home string) (*EnrollmentResponse, error) {
+	if req.Name == "" {
 		return nil, errors.Errorf(
-			"The URL of the fabric CA server is missing the enrollment ID and secret;"+
-				" found '%s' but expecting '%s'", rawurl, expecting)
-	}
-	c.Enrollment.CAName = c.CAName
-	c.URL = purl.String()
-	c.TLS.Enabled = purl.Scheme == "https"
-	if c.Enrollment.CSR == nil {
-		c.Enrollment.CSR = &c.CSR
+			"Missing the enrollment ID and secret;"+
+				" found '%s' with out user and secret", c.URL)
 	}
 	client := &Client{HomeDir: home, Config: c}
-	return client.Enroll(&c.Enrollment)
+	return client.Enroll(req)
+}
+
+func (c *ClientConfig) NewEnrollment() *api.EnrollmentRequest {
+
+	var enrollment = new(api.EnrollmentRequest)
+	enrollment.Name = c.Enrollment.Name
+	enrollment.Secret = c.Enrollment.Secret
+	enrollment.CAName = c.CAName
+	var csr api.CSRInfo
+	csr = c.CSR
+	enrollment.CSR = &csr
+	return enrollment
 }
 
 // GenCSR generates a certificate signing request and writes the CSR to a file.

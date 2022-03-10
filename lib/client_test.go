@@ -1062,23 +1062,28 @@ func testTooManyEnrollments(t *testing.T) {
 
 	rawURL := fmt.Sprintf("http://admin:adminpw@localhost:%d", ctport2)
 
-	_, err := clientConfig.Enroll(rawURL, testdataDir)
+	req := clientConfig.NewEnrollment()
+	var err error
+	clientConfig.URL, err = req.FromUrlStr(rawURL)
+	if err == nil {
+		_, err = clientConfig.Enroll(req, testdataDir)
+	}
 	if err != nil {
 		t.Errorf("Failed to enroll: %s", err)
 	}
 
-	_, err = clientConfig.Enroll(rawURL, testdataDir)
+	_, err = clientConfig.Enroll(req, testdataDir)
 	if err != nil {
 		t.Errorf("Failed to enroll: %s", err)
 	}
 
-	eresp, err := clientConfig.Enroll(rawURL, testdataDir)
+	eresp, err := clientConfig.Enroll(req, testdataDir)
 	if err != nil {
 		t.Errorf("Failed to enroll: %s", err)
 	}
 	id := eresp.Identity
 
-	_, err = clientConfig.Enroll(rawURL, testdataDir)
+	_, err = clientConfig.Enroll(req, testdataDir)
 	if err == nil {
 		t.Errorf("Enroll should have failed, no more enrollments left")
 	}
