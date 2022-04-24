@@ -18,7 +18,7 @@ import (
 	"github.com/extrame/fabric-ca/lib/server/db/sqlite"
 	cadbuser "github.com/extrame/fabric-ca/lib/server/user"
 	"github.com/jmoiron/sqlx"
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 	"github.com/stretchr/testify/assert"
 )
 

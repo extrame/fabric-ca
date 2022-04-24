@@ -1,3 +1,4 @@
+//go:build !caclient
 // +build !caclient
 
 /*
@@ -9,5 +10,5 @@ SPDX-License-Identifier: Apache-2.0
 package sqlite
 
 import (
-	_ "github.com/mattn/go-sqlite3" // import to support SQLite3
+	_ "modernc.org/sqlite" // import to support SQLite3
 )

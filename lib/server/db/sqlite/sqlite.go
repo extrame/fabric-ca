@@ -94,7 +94,6 @@ func (s *Sqlite) CreateTables() error {
 	// for development and test purposes only, and is not recommended to
 	// be used in a clustered topology, setting max open connections to
 	// 1 is a quick and effective solution
-	// For more info refer to https://github.com/mattn/go-sqlite3/issues/274
 	log.Debug("Successfully opened sqlite3 DB")
 	s.SqlxDB.SetMaxOpenConns(1)
 

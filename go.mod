@@ -22,7 +22,6 @@ require (
 	github.com/kisielk/sqlstruct v0.0.0-20201105191214-5f3e10d3ab46
 	github.com/lib/pq v1.8.0
 	github.com/magiconair/properties v1.8.1 // indirect
-	github.com/mattn/go-sqlite3 v1.14.5
 	github.com/miekg/pkcs11 v1.0.3 // indirect
 	github.com/mitchellh/mapstructure v1.4.2
 	github.com/onsi/ginkgo v1.16.2
@@ -41,4 +40,5 @@ require (
 	golang.org/x/crypto v0.0.0-20210915214749-c084706c2272
 	gopkg.in/asn1-ber.v1 v1.0.0-20181015200546-f715ec2f112d // indirect
 	gopkg.in/ldap.v2 v2.5.1
+	modernc.org/sqlite v1.16.0 // indirect
 )
