@@ -18,6 +18,7 @@ type MSPProvider interface {
 	SetRoot(dir string)
 	MkdirAll(path string, mode os.FileMode) error
 	GetFor(root string) MSPProvider
+	Delete(root string) error
 }
 
 type SelfSkStore interface {
@@ -72,6 +73,10 @@ func (f *FileMSPProvider) GetFor(root string) MSPProvider {
 	var nF FileMSPProvider
 	nF.root = root
 	return &nF
+}
+
+func (f *FileMSPProvider) Delete(root string) error {
+	return os.RemoveAll(root)
 }
 
 func RegisterMSPProvider(name string, provider MSPProvider) {

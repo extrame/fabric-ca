@@ -46,15 +46,30 @@ type ClientConfig struct {
 	IP         string
 }
 
-func (c *ClientConfig) GetMSPProvider() MSPProvider {
+func (c *ClientConfig) GetMSPProvider(dir ...string) MSPProvider {
 	if c.MSPType == "" {
 		c.MSPType = "file"
 	}
 	msp, ok := registeredMSPProvider[c.MSPType]
 	if ok {
+		if len(dir) > 0 {
+			return msp.GetFor(dir[0])
+		}
 		return msp.GetFor(c.MSPDir)
 	}
 	return nil
+}
+
+func (c *ClientConfig) DeleteMSP(dir ...string) error {
+	provider := c.GetMSPProvider(dir...)
+	if provider != nil {
+		if len(dir) > 0 {
+			return provider.Delete(dir[0])
+		} else {
+			return provider.Delete(c.MSPDir)
+		}
+	}
+	return errors.New("no msp provider")
 }
 
 func (c *ClientConfig) GetCustomizedIP() string {
