@@ -15,7 +15,7 @@ type MSPProvider interface {
 	WriteFile(path string, bytes []byte, mode os.FileMode) error
 	ReadFile(string) ([]byte, error)
 	FileExists(path string) bool
-	SetRoot(dir string)
+	SetRoot(dir string) error
 	MkdirAll(path string, mode os.FileMode) error
 	GetFor(root string) MSPProvider
 	Delete(root string) error
@@ -31,8 +31,9 @@ type FileMSPProvider struct {
 	root string
 }
 
-func (f *FileMSPProvider) SetRoot(dir string) {
+func (f *FileMSPProvider) SetRoot(dir string) error {
 	f.root = dir
+	return nil
 }
 
 // WriteFile writes a file
