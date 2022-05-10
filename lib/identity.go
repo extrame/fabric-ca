@@ -38,6 +38,11 @@ func NewIdentity(client *Client, name string, creds []credential.Credential) *Id
 	return id
 }
 
+// Get MSP Provider from Identity's client
+func (i *Identity) GetMSP() MSPProvider {
+	return i.client.mspProvider
+}
+
 // GetName returns the identity name
 func (i *Identity) GetName() string {
 	return i.name
