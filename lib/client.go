@@ -62,6 +62,8 @@ type Client struct {
 	issuerPublicKey *idemix.IssuerPublicKey
 	// the mspprovider
 	mspProvider MSPProvider
+	// Msp directory
+	MSPDir string `json:"mspDir,omitempty"`
 }
 
 // GetCAInfoResponse is the response from the GetCAInfo call
@@ -99,15 +101,19 @@ func (c *Client) Init() error {
 	if !c.initialized {
 		cfg := c.Config
 		log.Debugf("Initializing client with config: %+v", cfg)
-		if cfg.MSPDir == "" {
-			cfg.MSPDir = "msp"
+		if c.MSPDir == "" {
+			if cfg.MSPDir != "" {
+				c.MSPDir = "msp"
+			} else {
+				c.MSPDir = cfg.MSPDir
+			}
 		}
-		mspDir, err := util.MakeFileAbs(cfg.MSPDir, c.HomeDir)
+		mspDir, err := util.MakeFileAbs(c.MSPDir, c.HomeDir)
 		if err != nil {
 			return err
 		}
-		cfg.MSPDir = mspDir
-		c.mspProvider = cfg.GetMSPProvider()
+		c.MSPDir = mspDir
+		c.mspProvider = cfg.GetMSPProvider(c.MSPDir)
 
 		// Key directory and file
 		keyDir := "keystore"

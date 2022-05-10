@@ -21,6 +21,7 @@ type MSPProvider interface {
 	Delete(root string) error
 }
 
+//该MSPProvider是否是自存储私钥
 type SelfSkStore interface {
 	GetStoredKeys() map[string][]byte
 	StoreSk(bccsp.Key)
