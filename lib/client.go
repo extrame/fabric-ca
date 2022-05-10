@@ -102,7 +102,7 @@ func (c *Client) Init() error {
 		cfg := c.Config
 		log.Debugf("Initializing client with config: %+v", cfg)
 		if c.MSPDir == "" {
-			if cfg.MSPDir != "" {
+			if cfg.MSPDir == "" {
 				c.MSPDir = "msp"
 			} else {
 				c.MSPDir = cfg.MSPDir

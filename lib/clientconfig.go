@@ -79,13 +79,17 @@ func (c *ClientConfig) GetCustomizedIP() string {
 // Enroll a client given the server's URL and the client's home directory.
 // The URL may be of the form: http://user:pass@host:port where user and pass
 // are the enrollment ID and secret, respectively.
-func (c *ClientConfig) Enroll(req *api.EnrollmentRequest, home, mspDir string) (*EnrollmentResponse, error) {
+func (c *ClientConfig) Enroll(req *api.EnrollmentRequest, home string, mspDir ...string) (*EnrollmentResponse, error) {
 	if req.Name == "" {
 		return nil, errors.Errorf(
 			"Missing the enrollment ID and secret;"+
 				" found '%s' with out user and secret", c.URL)
 	}
-	client := &Client{HomeDir: home, Config: c, MSPDir: mspDir}
+
+	client := &Client{HomeDir: home, Config: c}
+	if len(mspDir) > 0 {
+		client.MSPDir = mspDir[0]
+	}
 	return client.Enroll(req)
 }
 
@@ -161,9 +165,12 @@ func (cfg *ClientConfig) ProcessAttributeStrings(cfgAttrReqs []string) error {
 
 // Register registers a new identity
 // @param req The registration request
-func (c *ClientConfig) Register(home, mspDir string) (rr *RegistrationResponse, err error) {
+func (c *ClientConfig) Register(home string, mspDir ...string) (rr *RegistrationResponse, err error) {
 
-	client := &Client{HomeDir: home, Config: c, MSPDir: mspDir}
+	client := &Client{HomeDir: home, Config: c}
+	if len(mspDir) > 0 {
+		client.MSPDir = mspDir[0]
+	}
 	client.HomeDir = home
 
 	id, err := client.LoadMyIdentity()
