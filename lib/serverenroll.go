@@ -15,13 +15,13 @@ import (
 	"github.com/cloudflare/cfssl/config"
 	"github.com/cloudflare/cfssl/csr"
 	cferr "github.com/cloudflare/cfssl/errors"
-	"github.com/cloudflare/cfssl/log"
 	"github.com/cloudflare/cfssl/signer"
 	"github.com/extrame/fabric-ca/internal/pkg/api"
 	"github.com/extrame/fabric-ca/internal/pkg/util"
 	"github.com/extrame/fabric-ca/lib/caerrors"
 	"github.com/extrame/fabric-ca/lib/server/user"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 const (

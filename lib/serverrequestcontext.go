@@ -17,7 +17,6 @@ import (
 	"strings"
 
 	"github.com/cloudflare/cfssl/config"
-	"github.com/cloudflare/cfssl/log"
 	"github.com/cloudflare/cfssl/revoke"
 	"github.com/cloudflare/cfssl/signer"
 	"github.com/extrame/fabric-ca/internal/pkg/api"
@@ -31,6 +30,7 @@ import (
 	gmux "github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 // ServerRequestContext defines the functionality of a server request context object

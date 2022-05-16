@@ -10,12 +10,12 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/internal/pkg/api"
 	"github.com/extrame/fabric-ca/internal/pkg/util"
 	"github.com/extrame/fabric-ca/lib/attr"
 	"github.com/extrame/fabric-ca/lib/caerrors"
 	"github.com/extrame/fabric-ca/lib/server/user"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/pkg/errors"
 )

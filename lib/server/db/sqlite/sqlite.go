@@ -11,10 +11,10 @@ import (
 	"database/sql"
 	"strings"
 
-	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/lib/server/db"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 //go:generate counterfeiter -o mocks/create.go -fake-name Create . Create

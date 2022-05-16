@@ -13,7 +13,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/internal/pkg/util"
 	cadb "github.com/extrame/fabric-ca/lib/server/db"
 	"github.com/extrame/fabric-ca/lib/server/metrics"
@@ -21,6 +20,7 @@ import (
 	"github.com/hyperledger/fabric/common/metrics/metricsfakes"
 	"github.com/jmoiron/sqlx"
 	. "github.com/onsi/gomega"
+	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -16,11 +16,11 @@ import (
 	"time"
 
 	"github.com/cloudflare/cfssl/crl"
-	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/internal/pkg/api"
 	"github.com/extrame/fabric-ca/internal/pkg/util"
 	"github.com/extrame/fabric-ca/lib/caerrors"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 const (

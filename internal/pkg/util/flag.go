@@ -12,9 +12,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/cloudflare/cfssl/log"
 	logging "github.com/op/go-logging"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )

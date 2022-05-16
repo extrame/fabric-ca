@@ -13,7 +13,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/cloudflare/cfssl/log"
+	log "github.com/sirupsen/logrus"
 	"github.com/hyperledger/fabric/bccsp/factory"
 	"github.com/pkg/errors"
 )

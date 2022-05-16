@@ -11,10 +11,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/internal/pkg/api"
 	"github.com/extrame/fabric-ca/internal/pkg/util"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 // AttributeControl interface gets the attributes associated with an identity

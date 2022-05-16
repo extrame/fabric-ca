@@ -11,7 +11,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/internal/pkg/api"
 	"github.com/extrame/fabric-ca/lib/attr"
 	"github.com/extrame/fabric-ca/lib/caerrors"
@@ -21,6 +20,7 @@ import (
 	cadbuser "github.com/extrame/fabric-ca/lib/server/user"
 	"github.com/extrame/fabric-ca/lib/spi"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 func newAffiliationsEndpoint(s *Server) *serverEndpoint {

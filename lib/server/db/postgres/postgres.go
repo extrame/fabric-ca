@@ -13,13 +13,13 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/lib/server/db"
 	"github.com/extrame/fabric-ca/lib/server/db/util"
 	"github.com/extrame/fabric-ca/lib/tls"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq" // import to support Postgres
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 // Postgres defines PostgreSQL database

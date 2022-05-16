@@ -23,11 +23,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/internal/pkg/util"
 	"github.com/hyperledger/fabric/bccsp"
 	"github.com/hyperledger/fabric/bccsp/factory"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -87,9 +87,9 @@ func GetClientTLSConfig(rw ReadWriter, cfg *ClientTLSConfig, csp bccsp.BCCSP) (*
 		csp = factory.GetDefault()
 	}
 
-	log.Debugf("CA Files: %+v\n", cfg.CertFiles)
-	log.Debugf("Client Cert File: %s\n", cfg.Client.CertFile)
-	log.Debugf("Client Key File: %s\n", cfg.Client.KeyFile)
+	logrus.Debugf("CA Files: %+v\n", cfg.CertFiles)
+	logrus.Debugf("Client Cert File: %s\n", cfg.Client.CertFile)
+	logrus.Debugf("Client Key File: %s\n", cfg.Client.KeyFile)
 
 	if cfg.Client.CertFile != "" {
 		err := checkCertDates(rw, cfg.Client.CertFile)
@@ -108,7 +108,7 @@ func GetClientTLSConfig(rw ReadWriter, cfg *ClientTLSConfig, csp bccsp.BCCSP) (*
 
 		certs = append(certs, *clientCert)
 	} else {
-		log.Debug("Client TLS certificate and/or key file not provided")
+		logrus.Debug("Client TLS certificate and/or key file not provided")
 	}
 	rootCAPool := x509.NewCertPool()
 	if len(cfg.CertFiles) == 0 {
@@ -185,7 +185,7 @@ func AbsTLSServer(cfg *ServerTLSConfig, configDir string) error {
 }
 
 func checkCertDates(rw ReadWriter, certFile string) error {
-	log.Debug("Check client TLS certificate for valid dates")
+	logrus.Debug("Check client TLS certificate for valid dates")
 	certPEM, err := rw.ReadFile(certFile)
 	if err != nil {
 		return errors.Wrapf(err, "Failed to read file '%s'", certFile)
@@ -227,7 +227,7 @@ func GetServerTLSConfig(rw ReadWriter, cfg *ServerTLSConfig, csp bccsp.BCCSP) (t
 		if !rw.FileExists(cfg.CertFile) {
 			return nil, fmt.Errorf("File specified by 'tls.certfile' does not exist: %s", cfg.CertFile)
 		}
-		log.Debugf("TLS Certificate: %s, TLS Key: %s", cfg.CertFile, cfg.KeyFile)
+		logrus.Debugf("TLS Certificate: %s, TLS Key: %s", cfg.CertFile, cfg.KeyFile)
 	} else if !rw.FileExists(cfg.CertFile) {
 		// TLS key file is not specified, generate TLS key and cert if they are not already generated
 		if gw, ok := rw.(AutoGenerator); ok {
@@ -254,7 +254,7 @@ func GetServerTLSConfig(rw ReadWriter, cfg *ServerTLSConfig, csp bccsp.BCCSP) (t
 		cfg.ClientAuth.Type = defaultClientAuth
 	}
 
-	log.Debugf("Client authentication type requested: %s", cfg.ClientAuth.Type)
+	logrus.Debugf("Client authentication type requested: %s", cfg.ClientAuth.Type)
 
 	authType := strings.ToLower(cfg.ClientAuth.Type)
 	if clientAuth, ok = clientAuthTypes[authType]; !ok {
@@ -286,13 +286,13 @@ func LoadPEMCertPool(rw ReadWriter, certFiles []string) (*x509.CertPool, error) 
 
 	if len(certFiles) > 0 {
 		for _, cert := range certFiles {
-			log.Debugf("Reading cert file: %s", cert)
+			logrus.Debugf("Reading cert file: %s", cert)
 			pemCerts, err := rw.ReadFile(cert)
 			if err != nil {
 				return nil, err
 			}
 
-			log.Debugf("Appending cert %s to pool", cert)
+			logrus.Debugf("Appending cert %s to pool", cert)
 			if !certPool.AppendCertsFromPEM(pemCerts) {
 				return nil, errors.New("Failed to load cert pool")
 			}

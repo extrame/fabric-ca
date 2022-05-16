@@ -11,10 +11,10 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/lib/server/db"
 	"github.com/kisielk/sqlstruct"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 const (

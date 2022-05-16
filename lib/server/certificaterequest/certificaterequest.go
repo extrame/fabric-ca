@@ -12,9 +12,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/internal/pkg/api"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 // CertificateRequest defines the properties of a certificate request

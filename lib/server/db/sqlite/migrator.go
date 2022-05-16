@@ -7,11 +7,11 @@ SPDX-License-Identifier: Apache-2.0
 package sqlite
 
 import (
-	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/lib/server/db"
 	"github.com/extrame/fabric-ca/lib/server/db/util"
 	"github.com/extrame/fabric-ca/lib/server/user"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 // Migrator defines migrator

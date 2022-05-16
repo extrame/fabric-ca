@@ -13,7 +13,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/lib/server/db"
 	"github.com/extrame/fabric-ca/lib/server/db/util"
 	"github.com/extrame/fabric-ca/lib/tls"
@@ -21,6 +20,7 @@ import (
 	"github.com/hyperledger/fabric/bccsp"
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 var (

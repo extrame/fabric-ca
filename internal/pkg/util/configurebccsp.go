@@ -1,3 +1,4 @@
+//go:build pkcs11
 // +build pkcs11
 
 /*
@@ -12,10 +13,10 @@ import (
 	"path"
 	"strings"
 
-	"github.com/cloudflare/cfssl/log"
 	"github.com/hyperledger/fabric/bccsp/factory"
 	"github.com/hyperledger/fabric/bccsp/pkcs11"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 // ConfigureBCCSP configures BCCSP, using

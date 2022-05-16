@@ -16,11 +16,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/internal/pkg/api"
 	"github.com/extrame/fabric-ca/lib/caerrors"
 	"github.com/grantae/certinfo"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 

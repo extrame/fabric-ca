@@ -21,11 +21,11 @@ import (
 	"path"
 	"strings"
 
-	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/internal/pkg/api"
 	"github.com/extrame/fabric-ca/lib/tls"
 	"github.com/hyperledger/fabric/bccsp/factory"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 // ClientConfig is the fabric-ca client's config

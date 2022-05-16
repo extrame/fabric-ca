@@ -9,8 +9,8 @@ package log
 import (
 	"strings"
 
-	"github.com/cloudflare/cfssl/log"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 // Constants defined for the different log levels

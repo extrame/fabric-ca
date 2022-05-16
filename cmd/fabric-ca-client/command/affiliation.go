@@ -19,9 +19,9 @@ package command
 import (
 	"fmt"
 
-	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/internal/pkg/api"
 	calog "github.com/extrame/fabric-ca/internal/pkg/log"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 

@@ -11,8 +11,8 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cfssl/api"
-	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/lib/caerrors"
+	log "github.com/sirupsen/logrus"
 )
 
 // serverEndpoint represents a particular endpoint (e.g. to "/api/v1/enroll")

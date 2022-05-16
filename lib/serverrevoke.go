@@ -10,11 +10,11 @@ import (
 	"encoding/hex"
 	"strings"
 
-	"github.com/cloudflare/cfssl/log"
 	"github.com/extrame/fabric-ca/internal/pkg/api"
 	"github.com/extrame/fabric-ca/internal/pkg/util"
 	"github.com/extrame/fabric-ca/lib/caerrors"
 	"github.com/extrame/fabric-ca/lib/server/db"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ocsp"
 )
 

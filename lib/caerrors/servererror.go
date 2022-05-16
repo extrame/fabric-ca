@@ -13,8 +13,8 @@ import (
 	"reflect"
 
 	cfsslapi "github.com/cloudflare/cfssl/api"
-	"github.com/cloudflare/cfssl/log"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 // Error codes
